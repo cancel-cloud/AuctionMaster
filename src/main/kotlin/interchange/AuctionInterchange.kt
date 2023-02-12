@@ -12,7 +12,7 @@ import kotlin.random.Random
 
 class AuctionInterchange : Interchange(
     label = "am",
-    commandProperties = CommandProperties.aliases("auctionmaster", "auction", "ah"),
+    commandProperties = CommandProperties.aliases("auctionmaster", "auction", "ah", "auction"),
     requiredClient = InterchangeUserRestriction.ONLY_PLAYERS,
 ) {
     override val execution: suspend InterchangeAccess<out InterchangeExecutor>.() -> InterchangeResult = {
