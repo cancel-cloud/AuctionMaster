@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.serialization") version "2.2.21"
 }
 
 group = "cloud.coffeesystems"
@@ -7,7 +8,7 @@ version = "1.0-SNAPSHOT"
 
 val ascendVersion = "21.0.0"
 val stackedVersion = "4.0.0"
-val sparkleVersion = "1.0.0-PRE-21a"
+val sparkleVersion = "1.0.0-PRE-22"
 
 repositories {
     mavenCentral()
@@ -18,10 +19,16 @@ repositories {
 dependencies {
 
     testImplementation(kotlin("test"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 
-    implementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    implementation("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+
+    // Database - Exposed ORM
+    implementation("org.jetbrains.exposed:exposed-core:0.47.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.47.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.47.0")
+    implementation("com.h2database:h2:2.2.224")
 
     compileOnly("com.github.TheFruxz:Ascend:$ascendVersion")
     compileOnly("com.github.TheFruxz:Stacked:$stackedVersion")

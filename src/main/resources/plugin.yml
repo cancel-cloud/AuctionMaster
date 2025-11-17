@@ -2,7 +2,7 @@ name: AuctionMaster
 main: AuctionMaster
 version: 1.0.0
 author: Cancelcloud
-api-version: 1.19
+api-version: 1.21
 depend:
   - Sparkle
 description: The new Way to Auction Stuff - User to User, directly
