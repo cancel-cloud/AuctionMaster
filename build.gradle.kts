@@ -1,35 +1,32 @@
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "1.9.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "cloud.coffeesystems"
 version = "1.0-SNAPSHOT"
 
-val ascendVersion = "21.0.0"
-val stackedVersion = "4.0.0"
-val sparkleVersion = "1.0.0-PRE-21a"
-
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
 
     testImplementation(kotlin("test"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    implementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
 
-    compileOnly("com.github.TheFruxz:Ascend:$ascendVersion")
-    compileOnly("com.github.TheFruxz:Stacked:$stackedVersion")
-    compileOnly("com.github.TheFruxz:Sparkle:$sparkleVersion")
-    @Suppress("DependencyOnStdlib") implementation(kotlin("stdlib"))
+    // Database dependencies
+    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
+    implementation("com.mysql:mysql-connector-j:8.0.33")
+
+    implementation(kotlin("stdlib"))
 
 }
-
 
 tasks.test {
     useJUnitPlatform()
@@ -37,4 +34,20 @@ tasks.test {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+
+    // Relocate dependencies to avoid conflicts
+    relocate("com.zaxxer.hikari", "cloud.coffeesystems.auctionmaster.libs.hikari")
+    relocate("org.sqlite", "cloud.coffeesystems.auctionmaster.libs.sqlite")
+    relocate("com.mysql", "cloud.coffeesystems.auctionmaster.libs.mysql")
+
+    // Minimize the jar
+    minimize()
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
