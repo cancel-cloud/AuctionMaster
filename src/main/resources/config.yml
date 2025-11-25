@@ -1,0 +1,141 @@
+# AuctionMaster Configuration
+
+# Language Settings
+# Available: en (English), de (German)
+language: en
+
+# Database Configuration
+database:
+  # Database type: SQLITE or MYSQL
+  type: SQLITE
+
+  # SQLite settings (used when type is SQLITE)
+  sqlite:
+    file: auctions.db
+
+  # MySQL settings (used when type is MYSQL)
+  mysql:
+    host: localhost
+    port: 3306
+    database: auctionmaster
+    username: root
+    password: password
+
+  # Connection pool settings
+  pool:
+    maximum-pool-size: 10
+    minimum-idle: 2
+    connection-timeout: 30000
+    idle-timeout: 600000
+    max-lifetime: 1800000
+
+  # PostgreSQL settings (used when type is POSTGRESQL)
+  postgresql:
+    host: localhost
+    port: 5432
+    database: auctionmaster
+    username: postgres
+    password: password
+
+# Lockdown Settings
+lockdown-enabled: false
+
+# Auction Settings
+auction:
+  # Duration of auctions in seconds (default: 24 hours)
+  duration: 86400
+
+  # Minimum auction price
+  min-price: 1.0
+
+  # Maximum auction price
+  max-price: 1000000.0
+
+  # Maximum number of active auctions per player
+  max-auctions-per-player: 5
+
+  # Items that cannot be auctioned (Material names)
+  blacklisted-items:
+    - BARRIER
+    - BEDROCK
+    - COMMAND_BLOCK
+    - STRUCTURE_BLOCK
+    - JIGSAW
+
+  # Check for expired auctions when player joins
+  expiry-check-on-join: true
+
+  # Time threshold in milliseconds for "expiring soon" warning (1 hour)
+  expiry-warning-threshold: 3600000
+
+  # Creation fees based on auction duration
+  # Fee formula: total_fee = base_fee + (asking_price * fee_percentage / 100)
+  creation-fees:
+    enabled: true
+    durations:
+      4h:
+        base-fee: 0.0
+        fee-percentage: 0.0
+      6h:
+        base-fee: 10.0
+        fee-percentage: 0.5
+      8h:
+        base-fee: 20.0
+        fee-percentage: 1.0
+      12h:
+        base-fee: 35.0
+        fee-percentage: 1.5
+      1d:
+        base-fee: 50.0
+        fee-percentage: 2.0
+      2d:
+        base-fee: 80.0
+        fee-percentage: 2.5
+      7d:
+        base-fee: 150.0
+        fee-percentage: 3.0
+
+# GUI Settings
+gui:
+  # Items per page in the auction house GUI
+  items-per-page: 45
+
+  # GUI refresh interval in seconds (0 to disable auto-refresh)
+  refresh-interval: 30
+
+# Economy Settings
+economy:
+  # Currency symbol
+  currency-symbol: $
+
+  # Number format (e.g., 1,000.00 or 1.000,00)
+  decimal-separator: .
+  thousands-separator: ","
+
+# Notification Settings
+notifications:
+  # Notify operators on join if database connection failed
+  notify-ops-on-join: true
+
+  # Notify seller when their auction is sold
+  notify-seller-on-sale: true
+
+  # Send action bar notification when auction is sold (if online)
+  sale-notification: true
+
+  # Notify player when their auction expires
+  notify-player-on-expiry: true
+
+  # Send action bar notification when auction expires (if online)
+  expiry-notification: true
+
+  # Show summary on join (X sold, Y expired while offline)
+  join-summary: true
+
+# Debug Settings
+debug:
+  # Enable debug logging
+  enabled: false
+
+  # Log all database queries
+  log-queries: false

@@ -1,0 +1,133 @@
+# AuctionMaster Deutsche Nachrichten
+# Verwende {0}, {1}, usw. für Platzhalter
+
+prefix: "&8[&6⚑ &eAuctionMaster&6 ⚑&8]&r"
+
+# Allgemeine Nachrichten
+reload-success: "&aKonfiguration und Nachrichten erfolgreich neu geladen!"
+no-permission: "&cDu hast keine Berechtigung dafür!"
+player-only: "&cDieser Befehl kann nur von Spielern verwendet werden!"
+invalid-syntax: "&cUngültige Syntax! Verwende: &e{0}"
+
+# Datenbank Nachrichten
+database:
+  connecting: "&eVerbinde mit Datenbank..."
+  connected: "&aErfolgreich mit Datenbank verbunden!"
+  connection-failed: "&c&lDATENBANKVERBINDUNG FEHLGESCHLAGEN!"
+  connection-error: "&cKonnte keine Datenbankverbindung herstellen. Bitte überprüfe die Konfiguration."
+  operator-warning: "&c&lWARNUNG: &eDie AuctionMaster Datenbank ist nicht verfügbar! Bitte kontaktiere einen Administrator."
+  reconnecting: "&eVersuche Datenbankverbindung wiederherzustellen..."
+  reconnect-success: "&aDatenbankverbindung wiederhergestellt!"
+
+# Auktions Nachrichten
+auction:
+  # Auktionen Erstellen
+  create:
+    success: "&a&l✓ &aAuktion erfolgreich erstellt!"
+    details: "&7Gegenstand: &f{0} &7| Preis: &6${1} &7| Dauer: &e{2}"
+    no-item: "&cDu musst einen Gegenstand in der Hand halten, um eine Auktion zu erstellen!"
+    invalid-price: "&cBitte gib einen gültigen Preis an! Beispiel: &e/auction create 100"
+    price-too-low: "&cDer Mindestauktionspreis beträgt &e${0}"
+    price-too-high: "&cDer Höchstauktionspreis beträgt &e${0}"
+    price-too-low-chat: "&cDer Preis muss mindestens &e${0} &csein. Gib einen neuen Preis ein oder tippe &f'cancel'&c."
+    already-active: "&cDu hast bereits eine aktive Auktion! Bitte warte bis sie abläuft oder verkauft wird."
+    max-reached: "&cDu hast die maximale Anzahl aktiver Auktionen erreicht ({0})."
+    blacklisted-item: "&cDieser Gegenstand kann nicht versteigert werden!"
+
+  # Auktionen Auflisten
+  list:
+    title: "&8[&6⚑&8] &eAktive Auktionen &8[&6⚑&8]"
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    item-format: "&6⚑ &f{0} &7- &6${1} &7von &e{2}"
+    hover-info: "&7Klicke um diesen Gegenstand zu kaufen\n&7Verbleibende Zeit: &e{0}\n&7Verkäufer: &e{1}"
+    no-auctions: "&eMomentan sind keine aktiven Auktionen verfügbar."
+    page-info: "&7Seite &e{0}&7/&e{1}"
+    next-page: "&a→ Nächste Seite"
+    prev-page: "&c← Vorherige Seite"
+
+  # Auktionen Kaufen
+  buy:
+    success: "&a&l✓ &aDu hast erfolgreich &f{0} &afür &6${1} &agekauft!"
+    not-found: "&cDiese Auktion existiert nicht mehr!"
+    own-auction: "&cDu kannst deine eigene Auktion nicht kaufen!"
+    insufficient-funds: "&cDu benötigst noch &6${0} &cum diesen Gegenstand zu kaufen!"
+    inventory-full: "&cDein Inventar ist voll! Schaffe Platz und versuche es erneut."
+    already-sold: "&cDiese Auktion wurde bereits verkauft!"
+    seller-notification: "&a&l✓ &aDeine Auktion für &f{0} &awurde für &6${1} &averkauft!"
+
+  # Auktionen Abbrechen
+  cancel:
+    success: "&a&l✓ &aAuktion abgebrochen! Dein Gegenstand wurde zurückgegeben."
+    not-found: "&cDu hast keine aktive Auktion mit dieser ID!"
+    failed: "&cAuktion konnte nicht abgebrochen werden. Bitte versuche es erneut."
+
+  # Auslaufende Auktionen
+  expire:
+    notification: "&eDeine Auktion für &f{0} &eist abgelaufen und wurde an dich zurückgegeben."
+    inventory-full: "&cDeine Auktion für &f{0} &cist abgelaufen, aber dein Inventar war voll! Gegenstand für später gespeichert."
+
+  # Auktions Info
+  info:
+    title: "&8[&6⚑&8] &eAuktionsdetails &8[&6⚑&8]"
+    seller: "&7Verkäufer: &e{0}"
+    item: "&7Gegenstand: &f{0}"
+    amount: "&7Anzahl: &e{0}"
+    price: "&7Preis: &6${0}"
+    time-left: "&7Verbleibende Zeit: &e{0}"
+    created: "&7Erstellt: &e{0}"
+
+# GUI Nachrichten
+gui:
+  auction-house:
+    title: "⚑ Auktionshaus"
+    your-auctions: "Deine Auktionen"
+    buy-now: "&a&lJETZT KAUFEN"
+    price: "&6Preis: ${0}"
+    seller: "&7Verkäufer: {0}"
+    time-left: "&eVerbleibende Zeit: {0}"
+    click-to-buy: "&7Klicke zum Kaufen!"
+    click-to-cancel: "&cKlicke zum Abbrechen"
+    no-auctions: "&7Keine aktiven Auktionen"
+    next-page: "&aNächste Seite →"
+    previous-page: "&cVorherige Seite ←"
+    refresh: "&eAngebote Aktualisieren"
+    close: "&cSchließen"
+
+# Zeitformate
+time:
+  days: "{0}T"
+  hours: "{0}Std"
+  minutes: "{0}Min"
+  seconds: "{0}Sek"
+  expired: "Abgelaufen"
+
+# Admin Nachrichten
+admin:
+  reload: "&aPlugin erfolgreich neu geladen!"
+  clear-auctions: "&e{0} &aAuktionen gelöscht!"
+  auction-removed: "&aAuktion ID &e{0} &aentfernt!"
+  player-auctions-cleared: "&aAlle Auktionen von &e{0} &agelöscht!"
+  database-status: "&7Datenbankstatus: {0}"
+  database-connected: "&aVerbunden"
+  database-disconnected: "&cGetrennt"
+
+# Hilfe Nachrichten
+help:
+  header: "&8&m━━━━━━━━━━&r &6⚑ &eAuctionMaster Hilfe &6⚑ &8&m━━━━━━━━━━"
+  footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  create: "&6/auction create <preis> &7- &fErstelle eine Auktion mit dem Gegenstand in deiner Hand"
+  list: "&6/auction list &7- &fZeige alle aktiven Auktionen"
+  cancel: "&6/auction cancel &7- &fBrich deine aktive Auktion ab"
+  info: "&6/auction info <id> &7- &fZeige Details über eine Auktion"
+  help: "&6/auction help &7- &fZeige diese Hilfenachricht"
+  admin-header: "&6Admin Befehle:"
+  reload: "&6/auction reload &7- &fLade die Plugin-Konfiguration neu"
+  clear: "&6/auction clear [spieler] &7- &fLösche Auktionen"
+
+# Plugin Info
+info:
+  version: "&7Version: &e{0}"
+  author: "&7Autor: &e{0}"
+  description: "&7Der neue Weg, Sachen zu versteigern - Benutzer zu Benutzer, direkt!"
+  developed-by: "&7Entwickelt von &e@cancel-cloud"

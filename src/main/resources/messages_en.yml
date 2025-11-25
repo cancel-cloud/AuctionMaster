@@ -1,0 +1,185 @@
+# AuctionMaster English Messages
+# Use {0}, {1}, etc. for placeholders
+
+prefix: "&8[&6⚑ &eAuctionMaster&6 ⚑&8]&r"
+
+# General Messages
+reload-success: "&aConfiguration and messages reloaded successfully!"
+no-permission: "&cYou don't have permission to do that!"
+player-only: "&cThis command can only be used by players!"
+invalid-syntax: "&cInvalid syntax! Use: &e{0}"
+
+# Database Messages
+database:
+  connecting: "&eConnecting to database..."
+  connected: "&aSuccessfully connected to database!"
+  connection-failed: "&c&lDATABASE CONNECTION FAILED!"
+  connection-error: "&cCould not establish database connection. Please check your configuration."
+  operator-warning: "&c&lWARNING: &eThe AuctionMaster database is not available! Please contact an administrator."
+  reconnecting: "&eAttempting to reconnect to database..."
+  reconnect-success: "&aDatabase connection restored!"
+
+# Auction Messages
+auction:
+  # Creating Auctions
+  create:
+    success: "&a&l✓ &aAuction created successfully!"
+    details: "&7Item: &f{0} &7| Price: &6${1} &7| Duration: &e{2}"
+    no-item: "&cYou need to hold an item in your hand to create an auction!"
+    invalid-price: "&cPlease specify a valid price! Example: &e/auction create 100"
+    price-too-low: "&cThe minimum auction price is &e${0}"
+    price-too-high: "&cThe maximum auction price is &e${0}"
+    price-too-low-chat: "&cPrice must be at least &e${0}&c. Enter a new price or type &f'cancel'&c."
+    already-active: "&cYou already have an active auction! Please wait until it expires or is sold."
+    max-reached: "&cYou have reached the maximum number of active auctions ({0})."
+    blacklisted-item: "&cThis item cannot be auctioned!"
+
+  # Listing Auctions
+  list:
+    title: "&8[&6⚑&8] &eActive Auctions &8[&6⚑&8]"
+    header: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    item-format: "&6⚑ &f{0} &7- &6${1} &7by &e{2}"
+    hover-info: "&7Click to purchase this item\n&7Time remaining: &e{0}\n&7Seller: &e{1}"
+    no-auctions: "&eNo active auctions available at the moment."
+    page-info: "&7Page &e{0}&7/&e{1}"
+    next-page: "&a→ Next Page"
+    prev-page: "&c← Previous Page"
+
+  # Buying Auctions
+  buy:
+    success: "&a&l✓ &aYou successfully purchased &f{0} &afor &6${1}&a!"
+    not-found: "&cThis auction no longer exists!"
+    own-auction: "&cYou cannot buy your own auction!"
+    insufficient-funds: "&cYou need &6${0} &cmore to purchase this item!"
+    inventory-full: "&cYour inventory is full! Make some space and try again."
+    already-sold: "&cThis auction has already been sold!"
+    seller-notification: "&a&l✓ &aYour auction for &f{0} &awas sold for &6${1}&a!"
+
+  # Canceling Auctions
+  cancel:
+    success: "&a&l✓ &aAuction canceled! Your item has been returned."
+    not-found: "&cYou don't have any active auctions to cancel!"
+    none-active: "&cYou don't have any active auctions!"
+    failed: "&cFailed to cancel auction. Please try again."
+    inventory-full: "&cYour inventory is full! Make space before canceling this auction."
+
+  # Viewing Auctions
+  view:
+    no-auctions: "&cPlayer &f{0} &cdoes not have any active auctions!"
+    player-not-found: "&cPlayer not found!"
+    viewing: "&aViewing auctions from &f{0}"
+
+  # Expiring Auctions
+  expire:
+    notification: "&eYour auction for &f{0} &ehas expired and been returned to you."
+    inventory-full: "&cYour auction for &f{0} &cexpired, but your inventory was full! Item saved for later."
+
+  # Auction Info
+  info:
+    title: "&8[&6⚑&8] &eAuction Details &8[&6⚑&8]"
+    seller: "&7Seller: &e{0}"
+    item: "&7Item: &f{0}"
+    amount: "&7Amount: &e{0}"
+    price: "&7Price: &6${0}"
+    time-left: "&7Time left: &e{0}"
+    created: "&7Created: &e{0}"
+
+# GUI Messages
+gui:
+  main-menu:
+    title: "⚑ Auction House"
+    browse-all: "&eView All Auctions"
+    your-listings: "&aYour Listings ({0})"
+    past-items: "&6Past Items"
+    create-auction: "&bCreate Auction"
+
+  my-listings:
+    title: "Your Active Listings"
+    click-to-cancel: "&cClick to cancel auction"
+
+  past-items:
+    title: "Your Auction History"
+    filter-all: "&7Show All"
+    filter-sold: "&aShow Sold Items"
+    filter-expired: "&cShow Expired Items"
+    click-to-claim: "&e&lClick to claim item back!"
+    claimed: "&a&l✓ &aItem returned to inventory!"
+
+  auction-house:
+    title: "⚑ Auction House"
+    your-auctions: "Your Auctions"
+    buy-now: "&a&lBUY NOW"
+    price: "&6Price: ${0}"
+    seller: "&7Seller: {0}"
+    time-left: "&eTime left: {0}"
+    click-to-buy: "&7Click to purchase!"
+    click-to-cancel: "&cClick to cancel"
+    no-auctions: "&7No active auctions"
+    next-page: "&aNext Page →"
+    previous-page: "&cPrevious Page ←"
+    refresh: "&eRefresh Listings"
+    close: "&cClose"
+  confirmation:
+    title: "&8Confirm Purchase"
+    confirm: "&a&lCONFIRM"
+    cancel: "&c&lCANCEL"
+  history:
+    title: "Purchase History: {0}"
+  cancel-confirmation:
+    title: "&8Cancel Auction?"
+    confirm: "&c&lCANCEL AUCTION"
+    back: "&a&lGO BACK"
+
+# Economy Messages
+economy:
+  not-available: "&cEconomy system is not available! Please contact an administrator."
+  transaction-failed: "&cTransaction failed! Please try again."
+
+# Auction Sold Messages
+auction-sold:
+  notification: "&a&l✓ &aYour auction for &f{0} &awas sold for &6${1}&a!"
+
+# Notification Messages
+notifications:
+  sale-action-bar: "&a✓ Your {0} sold for ${1}!"
+  expiry-action-bar: "&c✗ Auction for {0} expired"
+  join-summary: "&6While you were away: &a{0} item(s) sold &7| &c{1} auction(s) expired"
+
+# Time Formats
+time:
+  days: "{0}d"
+  hours: "{0}h"
+  minutes: "{0}m"
+  seconds: "{0}s"
+  expired: "Expired"
+
+# Admin Messages
+admin:
+  reload: "&aPlugin reloaded successfully!"
+  clear-auctions: "&aCleared &e{0} &aauctions!"
+  auction-removed: "&aRemoved auction ID &e{0}&a!"
+  player-auctions-cleared: "&aCleared all auctions from &e{0}&a!"
+  database-status: "&7Database Status: {0}"
+  database-connected: "&aConnected"
+  database-disconnected: "&cDisconnected"
+
+# Help Messages
+help:
+  header: "&8&m━━━━━━━━━━&r &6⚑ &eAuctionMaster Help &6⚑ &8&m━━━━━━━━━━"
+  footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  create: "&6/auction create [price] [duration] &7- &fCreate an auction with the item in your hand"
+  list: "&6/auction list &7- &fView all active auctions"
+  cancel: "&6/auction cancel &7- &fCancel your active auction"
+  info: "&6/auction info <id> &7- &fView details about an auction"
+  help: "&6/auction help &7- &fShow this help message"
+  admin-header: "&6Admin Commands:"
+  reload: "&6/auction reload &7- &fReload the plugin configuration"
+  clear: "&6/auction clear [player] &7- &fClear auctions"
+
+# Plugin Info
+info:
+  version: "&7Version: &e{0}"
+  author: "&7Author: &e{0}"
+  description: "&7The new way to auction stuff - User to User, directly!"
+  developed-by: "&7Developed by &e@cancel-cloud"
