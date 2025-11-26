@@ -31,7 +31,8 @@ class PendingPaymentListener(private val plugin: AuctionMaster) : Listener {
                                                     id = row[PendingPayments.id],
                                                     itemName = row[PendingPayments.itemName],
                                                     amount = row[PendingPayments.amount],
-                                                    timestamp = row[PendingPayments.timestamp]
+                                                    timestamp = row[PendingPayments.timestamp],
+                                                    paid = row[PendingPayments.paid]
                                             )
                                     )
                                 }
@@ -43,8 +44,18 @@ class PendingPaymentListener(private val plugin: AuctionMaster) : Listener {
                                 plugin,
                                 Runnable {
                                     for (payment in pendingPayments) {
-                                        // Deposit money
-                                        if (plugin.economyHook.deposit(player, payment.amount)) {
+                                        var success = true
+
+                                        // Deposit money if not already paid
+                                        if (!payment.paid) {
+                                            success =
+                                                    plugin.economyHook.deposit(
+                                                            player,
+                                                            payment.amount
+                                                    )
+                                        }
+
+                                        if (success) {
                                             // Send notification
                                             plugin.messageManager.send(
                                                     player,
@@ -79,6 +90,7 @@ class PendingPaymentListener(private val plugin: AuctionMaster) : Listener {
             val id: Int,
             val itemName: String,
             val amount: Double,
-            val timestamp: Long
+            val timestamp: Long,
+            val paid: Boolean
     )
 }

@@ -50,6 +50,7 @@ object PendingPayments : Table("pending_payments") {
     val itemName = varchar("item_name", 100)
     val amount = double("amount")
     val timestamp = long("timestamp")
+    val paid = bool("paid").default(false)
 
     override val primaryKey = PrimaryKey(id)
 }

@@ -288,6 +288,7 @@ class ConfirmationGUI(
                             it[itemName] = auction.item.type.name
                             it[amount] = auction.price
                             it[timestamp] = System.currentTimeMillis()
+                            it[paid] = true
                         }
                     }
                 } else {
@@ -301,6 +302,7 @@ class ConfirmationGUI(
                             it[itemName] = auction.item.type.name
                             it[amount] = auction.price
                             it[timestamp] = System.currentTimeMillis()
+                            it[paid] = false
                         }
                     }
                 }
