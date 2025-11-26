@@ -313,9 +313,7 @@ class CreateAuctionGUI(
     private fun handlePriceClick(player: Player) {
         awaitingPriceInput.add(player)
         player.closeInventory()
-        player.sendMessage(
-                Component.text("Enter auction price in chat (type 'cancel' to abort):", NamedTextColor.YELLOW)
-        )
+        plugin.messageManager.send(player, "auction.create.chat-prompt")
     }
 
     private fun handleDurationClick(player: Player) {
@@ -330,7 +328,7 @@ class CreateAuctionGUI(
 
     private fun handleConfirmClick(player: Player) {
         if (price == null || price!! <= 0) {
-            player.sendMessage(Component.text("Please set a price first!", NamedTextColor.RED))
+            plugin.messageManager.send(player, "auction.create.price-not-set")
             return
         }
 
@@ -367,11 +365,13 @@ class CreateAuctionGUI(
 
             val balance = plugin.economyHook.getBalance(player)
             if (balance < fee) {
-                player.sendMessage(
-                        Component.text(
-                                "Insufficient funds for creation fee! Need: $${"%.2f".format(fee)}, Have: $${"%.2f".format(balance)}",
-                                NamedTextColor.RED
-                        )
+                val needed = "%.2f".format(fee)
+                val available = "%.2f".format(balance)
+                plugin.messageManager.send(
+                        player,
+                        "auction.create.fee-insufficient",
+                        needed,
+                        available
                 )
                 return
             }
@@ -419,8 +419,10 @@ class CreateAuctionGUI(
             )
 
             if (fee > 0) {
-                player.sendMessage(
-                        Component.text("Creation fee charged: $${"%.2f".format(fee)}", NamedTextColor.GOLD)
+                plugin.messageManager.send(
+                        player,
+                        "auction.create.fee-charged",
+                        "%.2f".format(fee)
                 )
             }
 
@@ -430,16 +432,14 @@ class CreateAuctionGUI(
             if (fee > 0) {
                 plugin.economyHook.deposit(player, fee)
             }
-            player.sendMessage(
-                    Component.text("Failed to create auction. Fee refunded.", NamedTextColor.RED)
-            )
+            plugin.messageManager.send(player, "auction.create.failed-refund")
         }
     }
 
     private fun handleCancelClick(player: Player) {
         // Return item to player
         player.inventory.addItem(item)
-        player.sendMessage(Component.text("Auction creation cancelled.", NamedTextColor.YELLOW))
+        plugin.messageManager.send(player, "auction.create.cancelled")
         player.closeInventory()
     }
 
@@ -471,7 +471,10 @@ class CreateAuctionGUI(
                     .runTask(
                             plugin,
                             Runnable {
-                                player.sendMessage(Component.text("Price input cancelled.", NamedTextColor.YELLOW))
+                                plugin.messageManager.send(
+                                        player,
+                                        "auction.create.price-input-cancelled"
+                                )
                                 open(player)
                             }
                     )
@@ -484,14 +487,13 @@ class CreateAuctionGUI(
                     .runTask(
                             plugin,
                             Runnable {
-                                player.sendMessage(
-                                        Component.text(
-                                                "Invalid price! Enter a number or type 'cancel'.",
-                                                NamedTextColor.RED
-                                        )
+                                plugin.messageManager.send(
+                                        player,
+                                        "auction.create.price-invalid"
                                 )
-                                player.sendMessage(
-                                        Component.text("Please try again:", NamedTextColor.YELLOW)
+                                plugin.messageManager.send(
+                                        player,
+                                        "auction.create.price-retry"
                                 )
                             }
                     )
@@ -509,11 +511,9 @@ class CreateAuctionGUI(
                                         "auction.create.price-too-low-chat",
                                         minPrice
                                 )
-                                player.sendMessage(
-                                        Component.text(
-                                                "Enter a new price or type 'cancel'.",
-                                                NamedTextColor.YELLOW
-                                        )
+                                plugin.messageManager.send(
+                                        player,
+                                        "auction.create.price-enter-new"
                                 )
                             }
                     )
@@ -527,7 +527,11 @@ class CreateAuctionGUI(
                 .runTask(
                         plugin,
                         Runnable {
-                            player.sendMessage(Component.text("Price set to: $$price", NamedTextColor.GREEN))
+                            plugin.messageManager.send(
+                                    player,
+                                    "auction.create.price-set",
+                                    "%.2f".format(price)
+                            )
                             open(player)
                         }
                 )

@@ -243,9 +243,7 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
         val item = player.inventory.itemInMainHand
 
         if (item.type == Material.AIR) {
-            player.sendMessage(
-                    Component.text("Hold an item in your hand first!", NamedTextColor.RED)
-            )
+            plugin.messageManager.send(player, "auction.create.no-item")
             return
         }
 

@@ -339,9 +339,7 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
         if (pastItem.type == FilterMode.EXPIRED && pastItem.pendingId != null) {
             // Check if inventory has space
             if (player.inventory.firstEmpty() == -1) {
-                player.sendMessage(
-                        Component.text("Your inventory is full!", NamedTextColor.RED)
-                )
+                plugin.messageManager.send(player, "gui.past-items.inventory-full")
                 return
             }
 
@@ -352,7 +350,7 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
             plugin.auctionManager.claimExpiredItem(pastItem.pendingId)
 
             // Send success message
-            player.sendMessage(plugin.messageManager.get("gui.past-items.claimed"))
+            plugin.messageManager.send(player, "gui.past-items.claimed")
 
             // Refresh GUI
             open(player, currentPage, currentFilter)

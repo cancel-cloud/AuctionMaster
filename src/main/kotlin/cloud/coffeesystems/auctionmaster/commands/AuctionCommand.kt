@@ -146,21 +146,14 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
 
         val durationInput = args[2].lowercase()
         if (!durationPattern.matches(durationInput)) {
-            sender.sendMessage(
-                    Component.text(
-                            "Invalid duration format. Use values like 4h, 6h, 8h, 12h, 1d, 2d, or 7d.",
-                            NamedTextColor.RED
-                    )
-            )
+            plugin.messageManager.send(sender, "auction.create.duration-format")
             return
         }
 
         val durationOption = AuctionDuration.fromConfigKey(durationInput)
         if (durationOption == null) {
             val allowed = AuctionDuration.all().joinToString(", ") { it.configKey }
-            sender.sendMessage(
-                    Component.text("Unsupported duration. Use one of: $allowed", NamedTextColor.RED)
-            )
+            plugin.messageManager.send(sender, "auction.create.duration-unsupported", allowed)
             return
         }
 
@@ -173,11 +166,13 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
 
             val balance = plugin.economyHook.getBalance(sender)
             if (balance < fee) {
-                sender.sendMessage(
-                        Component.text(
-                                "Insufficient funds for creation fee! Need: $${"%.2f".format(fee)}, Have: $${"%.2f".format(balance)}",
-                                NamedTextColor.RED
-                        )
+                val needed = "%.2f".format(fee)
+                val available = "%.2f".format(balance)
+                plugin.messageManager.send(
+                        sender,
+                        "auction.create.fee-insufficient",
+                        needed,
+                        available
                 )
                 return
             }
@@ -228,20 +223,17 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
             )
 
             if (fee > 0) {
-                sender.sendMessage(
-                        Component.text("Creation fee charged: $${"%.2f".format(fee)}", NamedTextColor.GOLD)
+                plugin.messageManager.send(
+                        sender,
+                        "auction.create.fee-charged",
+                        "%.2f".format(fee)
                 )
             }
         } else {
             if (fee > 0) {
                 plugin.economyHook.deposit(sender, fee)
             }
-            sender.sendMessage(
-                    Component.text(
-                            "Failed to create auction. Please try again.",
-                            NamedTextColor.RED
-                    )
-            )
+            plugin.messageManager.send(sender, "auction.create.failed")
         }
     }
 
@@ -290,9 +282,7 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
         val auctions = plugin.auctionManager.getAuctionsBySeller(sender.uniqueId)
 
         if (auctions.isEmpty()) {
-            sender.sendMessage(
-                    Component.text("You have no active auctions to cancel.", NamedTextColor.RED)
-            )
+            plugin.messageManager.send(sender, "auction.cancel.none-active")
             return
         }
 
@@ -300,7 +290,7 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
         if (args.size > 1) {
             val auctionId = args[1].toIntOrNull()
             if (auctionId == null) {
-                sender.sendMessage(Component.text("Invalid auction ID.", NamedTextColor.RED))
+                plugin.messageManager.send(sender, "auction.invalid-id")
                 return
             }
 
@@ -345,7 +335,7 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
 
         val auctionId = args[1].toIntOrNull()
         if (auctionId == null) {
-            sender.sendMessage(Component.text("Invalid auction ID.", NamedTextColor.RED))
+            plugin.messageManager.send(sender, "auction.invalid-id")
             return
         }
 
@@ -403,9 +393,7 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
         }
 
         // Implementation for clearing auctions (admin feature)
-        sender.sendMessage(
-                Component.text("Clear auctions feature - to be implemented", NamedTextColor.YELLOW)
-        )
+        plugin.messageManager.send(sender, "admin.clear.unimplemented")
     }
 
     /** Handle /auction lockdown <on|off> */
@@ -473,7 +461,7 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
                 } catch (e: IllegalArgumentException) {
                     // Not a UUID
                 }
-                sender.sendMessage(Component.text("Player not found.", NamedTextColor.RED))
+                plugin.messageManager.send(sender, "auction.view.player-not-found")
                 return
             }
             // Found by name
@@ -492,9 +480,7 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
         }
 
         if (args.size < 2) {
-            sender.sendMessage(
-                    Component.text("Usage: /auction view <playername>", NamedTextColor.RED)
-            )
+            plugin.messageManager.send(sender, "auction.view.usage")
             return
         }
 

@@ -99,7 +99,7 @@ class PlayerJoinExpiryListener(private val plugin: AuctionMaster) : Listener {
         if (plugin.config.getBoolean("notifications.expiry-notification", true)) {
             if (expiredCount > 0) {
                 player.sendActionBar(
-                        Component.text("✗ $expiredCount auction(s) expired", NamedTextColor.RED)
+                        plugin.messageManager.get("notifications.expired-summary", expiredCount)
                 )
             }
         }
