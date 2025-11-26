@@ -1,4 +1,4 @@
-![AuctionMaster](https://cdn.upload.systems/uploads/vsr7ycbh.jpg)
+![AuctionMaster](./AutionMaster-Icon.png)
 
 # AuctionMaster 🏦
 
