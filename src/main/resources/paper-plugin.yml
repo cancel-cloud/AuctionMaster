@@ -16,10 +16,6 @@ dependencies:
       load: BEFORE
       join-classpath: true # so you can access Vault's classes
 
-    XConomy:
-      required: true
-      load: BEFORE
-
 permissions:
   auctionmaster.use:
     description: Allows the use of the auction system

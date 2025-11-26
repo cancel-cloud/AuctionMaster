@@ -9,7 +9,7 @@ plugins {
 // Project Metadata
 // ============================================================================
 group = "cloud.coffeesystems"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 var host = "github.com/cancel-cloud/AuctionMaster"
 
 // ============================================================================

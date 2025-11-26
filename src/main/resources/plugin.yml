@@ -1,8 +1,27 @@
 name: AuctionMaster
-main: AuctionMaster
 version: 1.0.0
-author: Cancelcloud
-api-version: 1.19
-depend:
-  - Sparkle
+main: cloud.coffeesystems.auctionmaster.AuctionMaster
+api-version: 1.21
 description: The new Way to Auction Stuff - User to User, directly
+author: Cancelcloud
+website: https://github.com/cancel-cloud/AuctionMaster
+depend:
+  - Vault
+softdepend:
+  - MCKotlin-Paper
+permissions:
+  auctionmaster.use:
+    description: Allows the use of the auction system
+    default: true
+  auctionmaster.create:
+    description: Allows creating auctions
+    default: true
+  auctionmaster.buy:
+    description: Allows buying from auctions
+    default: true
+  auctionmaster.admin:
+    description: Allows administrative access to the auction system
+    default: op
+  auctionmaster.notify:
+    description: Receive notifications about database issues
+    default: op

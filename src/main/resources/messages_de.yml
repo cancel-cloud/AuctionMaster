@@ -8,6 +8,10 @@ reload-success: "&aKonfiguration und Nachrichten erfolgreich neu geladen!"
 no-permission: "&cDu hast keine Berechtigung dafür!"
 player-only: "&cDieser Befehl kann nur von Spielern verwendet werden!"
 invalid-syntax: "&cUngültige Syntax! Verwende: &e{0}"
+lockdown:
+  active: "&cAuctionMaster befindet sich derzeit im LOCKDOWN."
+  enabled: "&cAuctionMaster wurde in den LOCKDOWN versetzt!"
+  disabled: "&aDer LOCKDOWN-Modus von AuctionMaster wurde deaktiviert."
 
 # Datenbank Nachrichten
 database:
@@ -33,6 +37,20 @@ auction:
     already-active: "&cDu hast bereits eine aktive Auktion! Bitte warte bis sie abläuft oder verkauft wird."
     max-reached: "&cDu hast die maximale Anzahl aktiver Auktionen erreicht ({0})."
     blacklisted-item: "&cDieser Gegenstand kann nicht versteigert werden!"
+    chat-prompt: "&eGib einen Auktionspreis im Chat ein (tippe 'cancel' zum Abbrechen)."
+    price-not-set: "&cBitte lege zuerst einen Preis fest!"
+    fee-insufficient: "&cDu benötigst ${0} für die Gebühr, hast aber nur ${1}."
+    fee-charged: "&6Erstellungsgebühr abgebucht: ${0}"
+    failed: "&cAuktion konnte nicht erstellt werden. Bitte versuche es erneut."
+    failed-refund: "&cAuktion konnte nicht erstellt werden. Die Gebühr wurde erstattet."
+    cancelled: "&eAuktionserstellung abgebrochen."
+    price-input-cancelled: "&ePreiseingabe abgebrochen."
+    price-invalid: "&cUngültiger Preis! Gib eine Zahl ein oder tippe 'cancel'."
+    price-retry: "&eBitte versuche es erneut:"
+    price-enter-new: "&eGib einen neuen Preis ein oder tippe 'cancel'."
+    price-set: "&aPreis gesetzt auf ${0}"
+    duration-format: "&cUngültiges Zeitformat. Verwende z. B. 4h, 6h, 8h, 12h, 1d, 2d oder 7d."
+    duration-unsupported: "&cDiese Dauer wird nicht unterstützt. Verwende eine der folgenden: &e{0}"
 
   # Auktionen Auflisten
   list:
@@ -60,7 +78,17 @@ auction:
   cancel:
     success: "&a&l✓ &aAuktion abgebrochen! Dein Gegenstand wurde zurückgegeben."
     not-found: "&cDu hast keine aktive Auktion mit dieser ID!"
+    none-active: "&cDu hast keine aktiven Auktionen!"
     failed: "&cAuktion konnte nicht abgebrochen werden. Bitte versuche es erneut."
+    inventory-full: "&cDein Inventar ist voll! Schaffe Platz bevor du diese Auktion abbrichst."
+
+  view:
+    no-auctions: "&cSpieler &f{0} &chat keine aktiven Auktionen!"
+    player-not-found: "&cSpieler nicht gefunden!"
+    viewing: "&aZeige Auktionen von &f{0}"
+    usage: "&cBenutzung: &e/auction view <spieler>"
+
+  invalid-id: "&cUngültige Auktions-ID."
 
   # Auslaufende Auktionen
   expire:
@@ -94,6 +122,22 @@ gui:
     refresh: "&eAngebote Aktualisieren"
     close: "&cSchließen"
 
+  past-items:
+    title: "Deine Auktionshistorie"
+    filter-all: "&7Alle anzeigen"
+    filter-sold: "&aVerkäufe anzeigen"
+    filter-expired: "&cAbgelaufene anzeigen"
+    click-to-claim: "&e&lKlicke, um den Gegenstand abzuholen!"
+    claimed: "&a&l✓ &aGegenstand zurück ins Inventar gelegt!"
+    inventory-full: "&cDein Inventar ist voll! Schaffe Platz und versuche es erneut."
+
+# Benachrichtigungen
+notifications:
+  sale-action-bar: "&a✓ Dein {0} wurde für ${1} verkauft!"
+  expiry-action-bar: "&c✗ Auktion für {0} ist abgelaufen"
+  join-summary: "&6Während du offline warst: &a{0} Gegenstände verkauft &7| &c{1} Auktionen abgelaufen"
+  expired-summary: "&c✗ {0} Auktion(en) sind abgelaufen"
+
 # Zeitformate
 time:
   days: "{0}T"
@@ -111,6 +155,33 @@ admin:
   database-status: "&7Datenbankstatus: {0}"
   database-connected: "&aVerbunden"
   database-disconnected: "&cGetrennt"
+  clear-unimplemented: "&eDie Löschfunktion ist noch nicht implementiert."
+
+migration:
+  sqlite-only: "&cMigration ist nur verfügbar, wenn eine SQLite-Datenbank verwendet wird."
+  lockdown-enabled: "&eLockdown-Modus für die Migration aktiviert."
+  stats:
+    header: "&6Migrationsstatistiken:"
+    auctions: "&7- Auktionen: &e{0}"
+    transactions: "&7- Transaktionen: &e{0}"
+    error: "&cFehler beim Abrufen der Statistiken: &f{0}"
+  postgres:
+    verified: "&aPostgreSQL-Verbindung erfolgreich überprüft."
+    failed: "&cPostgreSQL-Verbindung fehlgeschlagen!"
+    error: "&cFehler bei der PostgreSQL-Verbindung: &f{0}"
+  confirm:
+    prefix: "&eTippe "
+    command: "&6/auction migrate confirm"
+    suffix: "&e um die Migration zu starten."
+    warning: "&cDadurch werden Daten in der Zieldatenbank überschrieben!"
+  starting: "&aStarte Migration..."
+  progress:
+    auctions: "&7{0} Auktionen migriert..."
+    transactions: "&7{0} Transaktionen migriert..."
+  auctions-complete: "&aAuktionsmigration abgeschlossen (&e{0}&a Datensätze)."
+  transactions-complete: "&aTransaktionsmigration abgeschlossen (&e{0}&a Datensätze)."
+  success: "&aMigration erfolgreich abgeschlossen! Aktualisiere die config.yml auf PostgreSQL und starte neu."
+  failed: "&cMigration fehlgeschlagen: &f{0}"
 
 # Hilfe Nachrichten
 help:
