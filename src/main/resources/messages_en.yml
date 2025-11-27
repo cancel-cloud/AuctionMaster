@@ -161,6 +161,9 @@ economy:
 # Auction Sold Messages
 auction-sold:
   notification: "&a&l✓ &aYour auction for &f{0} &awas sold for &6${1}&a!"
+  summary: "&a&l✓ &aWhile you were offline, &e{0} &aitems were sold for &6${1}&a! &7(Hover for details)"
+  summary-hover: "&7Sold Items:\n{0}"
+  summary-item-format: "&7- &f{0} &7for &6${1}"
 
 # Notification Messages
 notifications:
@@ -226,10 +229,3 @@ help:
   admin-header: "&6Admin Commands:"
   reload: "&6/auction reload &7- &fReload the plugin configuration"
   clear: "&6/auction clear [player] &7- &fClear auctions"
-
-# Plugin Info
-info:
-  version: "&7Version: &e{0}"
-  author: "&7Author: &e{0}"
-  description: "&7The new way to auction stuff - User to User, directly!"
-  developed-by: "&7Developed by &e@cancel-cloud"

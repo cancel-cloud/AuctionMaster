@@ -131,6 +131,13 @@ gui:
     claimed: "&a&l✓ &aGegenstand zurück ins Inventar gelegt!"
     inventory-full: "&cDein Inventar ist voll! Schaffe Platz und versuche es erneut."
 
+# Verkaufte Auktionen Nachrichten
+auction-sold:
+  notification: "&a&l✓ &aDeine Auktion für &f{0} &awurde für &6${1} &averkauft!"
+  summary: "&a&l✓ &aWährend du offline warst, wurden &e{0} &aGegenstände für &6${1} &averkauft! &7(Fahre mit der Maus darüber)"
+  summary-hover: "&7Verkaufte Gegenstände:\n{0}"
+  summary-item-format: "&7- &f{0} &7für &6${1}"
+
 # Benachrichtigungen
 notifications:
   sale-action-bar: "&a✓ Dein {0} wurde für ${1} verkauft!"
@@ -195,10 +202,3 @@ help:
   admin-header: "&6Admin Befehle:"
   reload: "&6/auction reload &7- &fLade die Plugin-Konfiguration neu"
   clear: "&6/auction clear [spieler] &7- &fLösche Auktionen"
-
-# Plugin Info
-info:
-  version: "&7Version: &e{0}"
-  author: "&7Autor: &e{0}"
-  description: "&7Der neue Weg, Sachen zu versteigern - Benutzer zu Benutzer, direkt!"
-  developed-by: "&7Entwickelt von &e@cancel-cloud"
