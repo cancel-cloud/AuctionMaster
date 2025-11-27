@@ -3,6 +3,7 @@ package cloud.coffeesystems.auctionmaster.ui
 import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.model.Auction
 import cloud.coffeesystems.auctionmaster.util.TimeUtil
+import java.util.Locale
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
@@ -32,6 +33,16 @@ class AuctionGUI(private val plugin: AuctionMaster) : Listener {
 
     private var isSwitchingPage = false
 
+    private fun msg(key: String, vararg args: Any?) =
+            plugin.messageManager.get(key, *args).decoration(TextDecoration.ITALIC, false)
+
+    private fun msgList(key: String, vararg args: Any?): List<Component> =
+            plugin.messageManager.getList(key, *args).map {
+                it.decoration(TextDecoration.ITALIC, false)
+            }
+
+    private fun formatCurrency(value: Double): String = String.format(Locale.US, "%.2f", value)
+
     init {
         // Listener registration moved to open()
     }
@@ -56,10 +67,12 @@ class AuctionGUI(private val plugin: AuctionMaster) : Listener {
         plugin.logger.info("Found ${auctions.size} auctions")
 
         // Create inventory with dynamic title
-        val baseTitle = plugin.messageManager.get("gui.auction-house.title")
+        val baseTitle = msg("gui.auction-house.title")
         val title =
                 if (sellerFilter != null) {
-                    baseTitle.append(Component.text(" - $sellerFilter"))
+                    baseTitle.append(
+                            msg("gui.auction-house.filtered-suffix", sellerFilter)
+                    )
                 } else {
                     baseTitle
                 }
@@ -127,23 +140,22 @@ class AuctionGUI(private val plugin: AuctionMaster) : Listener {
         val lore = mutableListOf<Component>()
 
         // Price
-        lore.add(plugin.messageManager.get("gui.auction-house.price", auction.price))
+        lore.add(msg("gui.auction-house.price", formatCurrency(auction.price)))
 
         // Seller
-        lore.add(plugin.messageManager.get("gui.auction-house.seller", auction.sellerName))
+        lore.add(msg("gui.auction-house.seller", auction.sellerName))
 
         // Time left
         val timeLeft = TimeUtil.formatTime(plugin, auction.getRemainingTime())
-        lore.add(plugin.messageManager.get("gui.auction-house.time-left", timeLeft))
+        lore.add(msg("gui.auction-house.time-left", timeLeft))
 
-        // Add empty line
         lore.add(Component.empty())
 
         // Click to buy
         if (auction.isSeller(viewer.uniqueId)) {
-            lore.add(plugin.messageManager.get("gui.auction-house.click-to-cancel"))
+            lore.add(msg("gui.auction-house.click-to-cancel"))
         } else {
-            lore.add(plugin.messageManager.get("gui.auction-house.click-to-buy"))
+            lore.add(msg("gui.auction-house.click-to-buy"))
         }
 
         meta.lore(lore)
@@ -157,8 +169,9 @@ class AuctionGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(material)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get(nameKey)
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg(nameKey))
+        val lore = msgList("$nameKey-lore")
+        meta.lore(lore)
 
         item.itemMeta = meta
         return item
@@ -169,8 +182,8 @@ class AuctionGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.EMERALD)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get("gui.auction-house.refresh")
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg("gui.auction-house.refresh"))
+        meta.lore(msgList("gui.auction-house.refresh-lore"))
 
         item.itemMeta = meta
         return item
@@ -181,8 +194,8 @@ class AuctionGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.BARRIER)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get("gui.auction-house.close")
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg("gui.auction-house.close"))
+        meta.lore(msgList("gui.auction-house.close-lore"))
 
         item.itemMeta = meta
         return item
@@ -193,8 +206,9 @@ class AuctionGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.PAPER)
         val meta = item.itemMeta
 
-        val pageInfo = plugin.messageManager.get("auction.list.page-info", currentPage, totalPages)
-        meta.displayName(pageInfo.decoration(TextDecoration.ITALIC, false))
+        val pageInfo = msg("auction.list.page-info", currentPage, totalPages)
+        meta.displayName(pageInfo)
+        meta.lore(msgList("gui.controls.page-info-lore"))
 
         item.itemMeta = meta
         return item

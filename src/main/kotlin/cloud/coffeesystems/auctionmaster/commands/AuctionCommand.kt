@@ -364,7 +364,10 @@ class AuctionCommand(private val plugin: AuctionMaster) : CommandExecutor, TabCo
                 }
 
         plugin.messageManager.sendRaw(sender, "auction.info.seller", auction.sellerName)
-        sender.sendMessage(plugin.messageManager.get("auction.info.item").append(itemName))
+        plugin.messageManager.sendComponent(
+                sender,
+                plugin.messageManager.get("auction.info.item").append(itemName)
+        )
         plugin.messageManager.sendRaw(sender, "auction.info.amount", auction.item.amount)
         plugin.messageManager.sendRaw(sender, "auction.info.price", auction.price)
         plugin.messageManager.sendRaw(

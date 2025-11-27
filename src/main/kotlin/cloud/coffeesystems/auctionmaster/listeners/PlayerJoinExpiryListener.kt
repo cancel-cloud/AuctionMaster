@@ -92,7 +92,7 @@ class PlayerJoinExpiryListener(private val plugin: AuctionMaster) : Listener {
         val message = plugin.messageManager.get("notifications.join-summary", soldCount, expiredCount)
 
         player.sendMessage(Component.empty())
-        player.sendMessage(plugin.messageManager.get("prefix").append(Component.text(" ")).append(message))
+        plugin.messageManager.sendComponent(player, message)
         player.sendMessage(Component.empty())
 
         // Send action bar as well

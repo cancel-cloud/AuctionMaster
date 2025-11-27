@@ -3,6 +3,7 @@ package cloud.coffeesystems.auctionmaster.ui
 import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.model.Auction
 import cloud.coffeesystems.auctionmaster.model.AuctionStatus
+import java.util.Locale
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -38,6 +39,16 @@ class ConfirmationGUI(
     private lateinit var viewer: Player
     private var isOpening = false
 
+    private fun msg(key: String, vararg args: Any?) =
+            plugin.messageManager.get(key, *args).decoration(TextDecoration.ITALIC, false)
+
+    private fun msgList(key: String, vararg args: Any?): List<Component> =
+            plugin.messageManager.getList(key, *args).map {
+                it.decoration(TextDecoration.ITALIC, false)
+            }
+
+    private fun formatCurrency(value: Double): String = String.format(Locale.US, "%.2f", value)
+
     init {
         // Listener registration moved to open()
     }
@@ -50,8 +61,8 @@ class ConfirmationGUI(
 
         val title =
                 when (mode) {
-                    Mode.BUY -> plugin.messageManager.get("gui.confirmation.title")
-                    Mode.CANCEL -> plugin.messageManager.get("gui.cancel-confirmation.title")
+                    Mode.BUY -> msg("gui.confirmation.title")
+                    Mode.CANCEL -> msg("gui.cancel-confirmation.title")
                 }
         inventory = Bukkit.createInventory(null, 27, title)
 
@@ -62,16 +73,15 @@ class ConfirmationGUI(
         // Add lore with auction details
         val lore = mutableListOf<Component>()
         lore.add(Component.empty())
-        lore.add(plugin.messageManager.get("gui.auction-house.price", auction.price))
-        lore.add(plugin.messageManager.get("gui.auction-house.seller", auction.sellerName))
+        lore.add(msg("gui.auction-house.price", formatCurrency(auction.price)))
+        lore.add(msg("gui.auction-house.seller", auction.sellerName))
 
         val timeLeft =
                 cloud.coffeesystems.auctionmaster.util.TimeUtil.formatTime(
                         plugin,
                         auction.getRemainingTime()
                 )
-        lore.add(plugin.messageManager.get("gui.auction-house.time-left", timeLeft))
-
+        lore.add(msg("gui.auction-house.time-left", timeLeft))
         meta.lore(lore)
         displayItem.itemMeta = meta
 
@@ -90,9 +100,9 @@ class ConfirmationGUI(
                     Mode.BUY -> "gui.confirmation.confirm"
                     Mode.CANCEL -> "gui.cancel-confirmation.confirm"
                 }
-        confirmMeta.displayName(
-                plugin.messageManager.get(confirmKey).decoration(TextDecoration.ITALIC, false)
-        )
+        val confirmLoreKey = "$confirmKey-lore"
+        confirmMeta.displayName(msg(confirmKey))
+        confirmMeta.lore(msgList(confirmLoreKey))
         confirmItem.itemMeta = confirmMeta
         inventory.setItem(11, confirmItem)
 
@@ -109,9 +119,9 @@ class ConfirmationGUI(
                     Mode.BUY -> "gui.confirmation.cancel"
                     Mode.CANCEL -> "gui.cancel-confirmation.back"
                 }
-        cancelMeta.displayName(
-                plugin.messageManager.get(cancelKey).decoration(TextDecoration.ITALIC, false)
-        )
+        val cancelLoreKey = "$cancelKey-lore"
+        cancelMeta.displayName(msg(cancelKey))
+        cancelMeta.lore(msgList(cancelLoreKey))
         cancelItem.itemMeta = cancelMeta
         inventory.setItem(15, cancelItem)
 

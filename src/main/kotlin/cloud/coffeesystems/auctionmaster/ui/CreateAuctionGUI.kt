@@ -2,8 +2,8 @@ package cloud.coffeesystems.auctionmaster.ui
 
 import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.model.AuctionDuration
+import java.util.Locale
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -37,9 +37,26 @@ class CreateAuctionGUI(
     private var price: Double? = initialPrice
     private var selectedDuration: AuctionDuration = initialDuration
 
+    private fun msg(key: String, vararg args: Any?) =
+            plugin.messageManager.get(key, *args).decoration(TextDecoration.ITALIC, false)
+
+    private fun msgList(key: String, vararg args: Any?): List<Component> =
+            plugin.messageManager.getList(key, *args).map {
+                it.decoration(TextDecoration.ITALIC, false)
+            }
+
+    private fun formatCurrency(value: Double): String = String.format(Locale.US, "%.2f", value)
+
+    private fun formatPercentage(value: Double): String =
+            if (value % 1.0 == 0.0) {
+                value.toInt().toString()
+            } else {
+                String.format(Locale.US, "%.2f", value)
+            }
+
     fun open(player: Player) {
         viewer = player
-        inventory = Bukkit.createInventory(null, 27, Component.text("Create Auction"))
+        inventory = Bukkit.createInventory(null, 27, msg("gui.create-auction.title"))
 
         updateInventory()
 
@@ -59,10 +76,7 @@ class CreateAuctionGUI(
         val meta = displayItem.itemMeta
         val lore = mutableListOf<Component>()
         lore.add(Component.empty())
-        lore.add(
-                Component.text("Amount: ${item.amount}", NamedTextColor.GRAY)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
+        lore.add(msg("gui.create-auction.display.amount", item.amount))
         meta.lore(lore)
         displayItem.itemMeta = meta
         inventory.setItem(13, displayItem)
@@ -103,29 +117,13 @@ class CreateAuctionGUI(
                         if (price != null) Material.EMERALD else Material.GOLD_INGOT
                 )
         val meta = item.itemMeta
-
-        val name =
-                if (price != null) {
-                    Component.text("Price: $$price", NamedTextColor.GREEN)
+        meta.displayName(msg("gui.create-auction.price.name"))
+        val lore =
+                if (price == null) {
+                    msgList("gui.create-auction.price.lore-unset")
                 } else {
-                    Component.text("Set Price", NamedTextColor.YELLOW)
+                    msgList("gui.create-auction.price.lore-set", formatCurrency(price!!))
                 }
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
-
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-        if (price == null) {
-            lore.add(
-                    Component.text("Click to set auction price", NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-        } else {
-            lore.add(
-                    Component.text("Click to change price", NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-        }
-
         meta.lore(lore)
         item.itemMeta = meta
         return item
@@ -135,14 +133,6 @@ class CreateAuctionGUI(
         val item = ItemStack(Material.CLOCK)
         val meta = item.itemMeta
 
-        meta.displayName(
-                Component.text("Duration: ${selectedDuration.displayName}", NamedTextColor.AQUA)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
-
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-
         val baseFee = selectedDuration.getBaseFee(plugin)
         val feePercentage = selectedDuration.getFeePercentage(plugin)
 
@@ -151,28 +141,15 @@ class CreateAuctionGUI(
         plugin.logger.info("Base Fee: $baseFee, Fee Percentage: $feePercentage")
         plugin.logger.info("Config enabled: ${plugin.config.getBoolean("auction.creation-fees.enabled", false)}")
 
-        if (selectedDuration.isFree(plugin)) {
-            lore.add(
-                    Component.text("FREE", NamedTextColor.GREEN)
-                            .decoration(TextDecoration.ITALIC, false)
-                            .decoration(TextDecoration.BOLD, true)
-            )
-        } else {
-            lore.add(
-                    Component.text("Base Fee: $${"%.2f".format(baseFee)}", NamedTextColor.YELLOW)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-            lore.add(
-                    Component.text("+ ${feePercentage}% of price", NamedTextColor.YELLOW)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-        }
-
-        lore.add(Component.empty())
-        lore.add(
-                Component.text("Click to change duration", NamedTextColor.GRAY)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
+        meta.displayName(msg("gui.create-auction.duration.name"))
+        val lore =
+                msgList(
+                                "gui.create-auction.duration.lore",
+                                selectedDuration.displayName,
+                                formatCurrency(baseFee),
+                                formatPercentage(feePercentage)
+                        )
+                        .toMutableList()
 
         meta.lore(lore)
         item.itemMeta = meta
@@ -188,36 +165,14 @@ class CreateAuctionGUI(
                 )
         val meta = item.itemMeta
 
-        meta.displayName(
-                Component.text(
-                                "Create Auction",
-                                if (canCreate) NamedTextColor.GREEN else NamedTextColor.DARK_GRAY
-                        )
-                        .decoration(TextDecoration.ITALIC, false)
-                        .decoration(TextDecoration.BOLD, true)
-        )
-
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-
-        if (!canCreate) {
-            lore.add(
-                    Component.text("Set a price first!", NamedTextColor.RED)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-        } else {
-            val fee = selectedDuration.calculateFee(plugin, price!!)
-            if (fee > 0) {
-                lore.add(
-                        Component.text("Creation Fee: $${"%.2f".format(fee)}", NamedTextColor.GOLD)
-                                .decoration(TextDecoration.ITALIC, false)
-                )
-            }
-            lore.add(
-                    Component.text("Click to create!", NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-        }
+        meta.displayName(msg("gui.create-auction.confirm.name"))
+        val lore =
+                if (!canCreate) {
+                    msgList("gui.create-auction.confirm.lore-disabled")
+                } else {
+                    val fee = selectedDuration.calculateFee(plugin, price!!)
+                    msgList("gui.create-auction.confirm.lore-ready", formatCurrency(fee))
+                }
 
         meta.lore(lore)
         item.itemMeta = meta
@@ -228,20 +183,8 @@ class CreateAuctionGUI(
         val item = ItemStack(Material.RED_TERRACOTTA)
         val meta = item.itemMeta
 
-        meta.displayName(
-                Component.text("Cancel", NamedTextColor.RED)
-                        .decoration(TextDecoration.ITALIC, false)
-                        .decoration(TextDecoration.BOLD, true)
-        )
-
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-        lore.add(
-                Component.text("Click to cancel", NamedTextColor.GRAY)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
-
-        meta.lore(lore)
+        meta.displayName(msg("gui.create-auction.cancel.name"))
+        meta.lore(msgList("gui.create-auction.cancel.lore"))
         item.itemMeta = meta
         return item
     }
@@ -250,36 +193,20 @@ class CreateAuctionGUI(
         val item = ItemStack(Material.PAPER)
         val meta = item.itemMeta
 
-        meta.displayName(
-                Component.text("Fee Breakdown", NamedTextColor.GOLD)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
-
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-
         val baseFee = selectedDuration.getBaseFee(plugin)
         val feePercentage = selectedDuration.getFeePercentage(plugin)
         val percentageFee = price!! * (feePercentage / 100.0)
         val totalFee = baseFee + percentageFee
 
-        lore.add(
-                Component.text("Base Fee: $${"%.2f".format(baseFee)}", NamedTextColor.YELLOW)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
-        lore.add(
-                Component.text(
-                                "Percentage Fee: $${"%.2f".format(percentageFee)} ($feePercentage%)",
-                                NamedTextColor.YELLOW
-                        )
-                        .decoration(TextDecoration.ITALIC, false)
-        )
-        lore.add(Component.empty())
-        lore.add(
-                Component.text("Total Fee: $${"%.2f".format(totalFee)}", NamedTextColor.GOLD)
-                        .decoration(TextDecoration.ITALIC, false)
-                        .decoration(TextDecoration.BOLD, true)
-        )
+        meta.displayName(msg("gui.create-auction.fee-info.name"))
+        val lore =
+                msgList(
+                        "gui.create-auction.fee-info.lore",
+                        formatCurrency(baseFee),
+                        formatCurrency(percentageFee),
+                        formatPercentage(feePercentage),
+                        formatCurrency(totalFee)
+                )
 
         meta.lore(lore)
         item.itemMeta = meta

@@ -4,8 +4,8 @@ import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.model.Auction
 import cloud.coffeesystems.auctionmaster.model.AuctionStatus
 import cloud.coffeesystems.auctionmaster.util.TimeUtil
+import java.util.Locale
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -32,6 +32,16 @@ class MyListingsGUI(private val plugin: AuctionMaster) : Listener {
     private var currentAuctions: List<Auction> = emptyList()
     private var isSwitchingPage = false
 
+    private fun msg(key: String, vararg args: Any?) =
+            plugin.messageManager.get(key, *args).decoration(TextDecoration.ITALIC, false)
+
+    private fun msgList(key: String, vararg args: Any?): List<Component> =
+            plugin.messageManager.getList(key, *args).map {
+                it.decoration(TextDecoration.ITALIC, false)
+            }
+
+    private fun formatCurrency(value: Double): String = String.format(Locale.US, "%.2f", value)
+
     fun open(player: Player, page: Int = 0) {
         plugin.logger.info("Opening MyListingsGUI for ${player.name}, page $page")
 
@@ -44,7 +54,7 @@ class MyListingsGUI(private val plugin: AuctionMaster) : Listener {
                     !it.isExpired()
                 }
 
-        val title = plugin.messageManager.get("gui.my-listings.title")
+        val title = msg("gui.my-listings.title")
         inventory = Bukkit.createInventory(null, 54, title)
 
         // Calculate pagination
@@ -101,38 +111,20 @@ class MyListingsGUI(private val plugin: AuctionMaster) : Listener {
 
         // Create lore with auction info
         val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-
         // Price
-        lore.add(plugin.messageManager.get("gui.auction-house.price", auction.price))
+        lore.add(msg("gui.auction-house.price", formatCurrency(auction.price)))
 
-        // Time left with color coding
+        // Time left
         val timeLeft = auction.getRemainingTime()
         val timeFormatted = TimeUtil.formatTime(plugin, timeLeft)
-        val timeColor =
-                when {
-                    timeLeft < 3600000 -> NamedTextColor.RED // < 1 hour
-                    timeLeft < 10800000 -> NamedTextColor.GOLD // < 3 hours
-                    else -> NamedTextColor.GREEN
-                }
-
-        lore.add(
-                Component.text("Time left: ", NamedTextColor.GRAY)
-                        .append(Component.text(timeFormatted, timeColor))
-                        .decoration(TextDecoration.ITALIC, false)
-        )
+        lore.add(msg("gui.auction-house.time-left", timeFormatted))
 
         if (timeLeft < 3600000) {
-            lore.add(
-                    Component.text("⚠ EXPIRING SOON!", NamedTextColor.RED)
-                            .decoration(TextDecoration.ITALIC, false)
-                            .decoration(TextDecoration.BOLD, true)
-            )
+            lore.add(msg("gui.my-listings.expiring-warning"))
         }
 
-        // Instructions
         lore.add(Component.empty())
-        lore.add(plugin.messageManager.get("gui.my-listings.click-to-cancel"))
+        lore.add(msg("gui.my-listings.click-to-cancel"))
 
         meta.lore(lore)
         item.itemMeta = meta
@@ -144,8 +136,8 @@ class MyListingsGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(material)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get(nameKey)
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg(nameKey))
+        meta.lore(msgList("$nameKey-lore"))
 
         item.itemMeta = meta
         return item
@@ -155,8 +147,8 @@ class MyListingsGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.EMERALD)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get("gui.auction-house.refresh")
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg("gui.auction-house.refresh"))
+        meta.lore(msgList("gui.auction-house.refresh-lore"))
 
         item.itemMeta = meta
         return item
@@ -166,10 +158,8 @@ class MyListingsGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.BARRIER)
         val meta = item.itemMeta
 
-        meta.displayName(
-                Component.text("Back to Menu", NamedTextColor.RED)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
+        meta.displayName(msg("gui.controls.back"))
+        meta.lore(msgList("gui.controls.back-lore"))
 
         item.itemMeta = meta
         return item
@@ -179,8 +169,9 @@ class MyListingsGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.PAPER)
         val meta = item.itemMeta
 
-        val pageInfo = plugin.messageManager.get("auction.list.page-info", currentPage, totalPages)
-        meta.displayName(pageInfo.decoration(TextDecoration.ITALIC, false))
+        val pageInfo = msg("auction.list.page-info", currentPage, totalPages)
+        meta.displayName(pageInfo)
+        meta.lore(msgList("gui.controls.page-info-lore"))
 
         item.itemMeta = meta
         return item

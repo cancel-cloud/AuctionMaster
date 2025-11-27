@@ -51,18 +51,29 @@ class MessageManager(private val plugin: JavaPlugin) {
         }
 
         fun send(sender: CommandSender, key: String, vararg placeholders: Any?) {
-                val prefix = get("prefix")
-                val message = get(key, *placeholders)
-                sender.sendMessage(prefix.append(Component.text(" ")).append(message))
+                sender.sendMessage(prefixed(get(key, *placeholders)))
         }
 
         fun sendRaw(sender: CommandSender, key: String, vararg placeholders: Any?) {
-                sender.sendMessage(get(key, *placeholders))
+                send(sender, key, *placeholders)
         }
 
-        fun getList(key: String): List<Component> {
-                val values = messages.getStringList(key)
-                return values.map { legacySerializer.deserialize(it) }
+        fun sendComponent(sender: CommandSender, component: Component) {
+                sender.sendMessage(prefixed(component))
+        }
+
+        fun getList(key: String, vararg placeholders: Any?): List<Component> {
+                val values =
+                        if (messages.contains(key)) {
+                                messages.getStringList(key)
+                        } else {
+                                fallbackMessages.getStringList(key)
+                        }
+                if (values.isEmpty()) return emptyList()
+                return values.map { line ->
+                        val formatted = formatString(line, placeholders)
+                        legacySerializer.deserialize(formatted)
+                }
         }
 
         private fun readMessage(key: String): String? {
@@ -80,5 +91,9 @@ class MessageManager(private val plugin: JavaPlugin) {
                                 }
                         }
                 return MessageFormat.format(template, *converted.toTypedArray())
+        }
+
+        private fun prefixed(component: Component): Component {
+                return get("prefix").append(Component.text(" ")).append(component)
         }
 }

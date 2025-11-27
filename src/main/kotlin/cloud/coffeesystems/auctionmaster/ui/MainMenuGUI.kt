@@ -2,7 +2,6 @@ package cloud.coffeesystems.auctionmaster.ui
 
 import cloud.coffeesystems.auctionmaster.AuctionMaster
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -25,10 +24,18 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
     private lateinit var inventory: Inventory
     private lateinit var viewer: Player
 
+    private fun msg(key: String, vararg args: Any?) =
+            plugin.messageManager.get(key, *args).decoration(TextDecoration.ITALIC, false)
+
+    private fun msgList(key: String, vararg args: Any?): List<Component> =
+            plugin.messageManager.getList(key, *args).map {
+                it.decoration(TextDecoration.ITALIC, false)
+            }
+
     fun open(player: Player) {
         viewer = player
 
-        val title = plugin.messageManager.get("gui.main-menu.title")
+        val title = msg("gui.main-menu.title")
         inventory = Bukkit.createInventory(null, 27, title)
 
         // Create menu items
@@ -61,22 +68,10 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.COMPASS)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get("gui.main-menu.browse-all")
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
-
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
+        meta.displayName(msg("gui.main-menu.browse-all.name"))
 
         val activeCount = plugin.auctionManager.getActiveAuctions().size
-        lore.add(
-                Component.text("$activeCount active auctions", NamedTextColor.GRAY)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
-        lore.add(Component.empty())
-        lore.add(
-                Component.text("Click to browse!", NamedTextColor.YELLOW)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
+        val lore = msgList("gui.main-menu.browse-all.lore", activeCount)
 
         meta.lore(lore)
         item.itemMeta = meta
@@ -88,43 +83,18 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
         val meta = item.itemMeta
 
         val count = plugin.auctionManager.getActiveAuctionCountNotExpired(player.uniqueId)
-        val name = plugin.messageManager.get("gui.main-menu.your-listings", count)
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg("gui.main-menu.your-listings.name"))
 
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
+        val lore = msgList("gui.main-menu.your-listings.lore", count).toMutableList()
 
-        if (count == 0) {
-            lore.add(
-                    Component.text("No active listings", NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-        } else {
-            lore.add(
-                    Component.text("View and manage your auctions", NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
+        val expiringSoon =
+                plugin.auctionManager
+                        .getAuctionsBySeller(player.uniqueId)
+                        .count { it.getRemainingTime() < 3600000 }
 
-            // Check for expiring soon auctions
-            val expiringSoon =
-                    plugin.auctionManager
-                            .getAuctionsBySeller(player.uniqueId)
-                            .count { it.getRemainingTime() < 3600000 } // < 1 hour
-
-            if (expiringSoon > 0) {
-                lore.add(
-                        Component.text("⚠ $expiringSoon expiring soon!", NamedTextColor.RED)
-                                .decoration(TextDecoration.ITALIC, false)
-                                .decoration(TextDecoration.BOLD, true)
-                )
-            }
+        if (expiringSoon > 0) {
+            lore.add(msg("gui.main-menu.your-listings.expiring", expiringSoon))
         }
-
-        lore.add(Component.empty())
-        lore.add(
-                Component.text("Click to view!", NamedTextColor.YELLOW)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
 
         meta.lore(lore)
         item.itemMeta = meta
@@ -135,41 +105,18 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.BOOK)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get("gui.main-menu.past-items")
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        val name = msg("gui.main-menu.past-items.name")
+        meta.displayName(name)
 
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-
-        // Count sold items
         val soldCount = plugin.auctionManager.getHistory(player.uniqueId).size
 
-        // Count expired items
         val expiredCount = plugin.auctionManager.getPendingExpiredItems(player.uniqueId).size
 
-        lore.add(
-                Component.text("Sold: $soldCount", NamedTextColor.GREEN)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
-        lore.add(
-                Component.text("Expired: $expiredCount", NamedTextColor.RED)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
+        val lore = msgList("gui.main-menu.past-items.lore", soldCount, expiredCount).toMutableList()
 
         if (expiredCount > 0) {
-            lore.add(Component.empty())
-            lore.add(
-                    Component.text("$expiredCount items to claim!", NamedTextColor.GOLD)
-                            .decoration(TextDecoration.ITALIC, false)
-                            .decoration(TextDecoration.BOLD, true)
-            )
+            lore.add(msg("gui.main-menu.past-items.pending", expiredCount))
         }
-
-        lore.add(Component.empty())
-        lore.add(
-                Component.text("Click to view!", NamedTextColor.YELLOW)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
 
         meta.lore(lore)
         item.itemMeta = meta
@@ -180,20 +127,10 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.DIAMOND)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get("gui.main-menu.create-auction")
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        val name = msg("gui.main-menu.create-auction.name")
+        meta.displayName(name)
 
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-        lore.add(
-                Component.text("Create a new auction", NamedTextColor.GRAY)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
-        lore.add(Component.empty())
-        lore.add(
-                Component.text("Hold an item and click!", NamedTextColor.YELLOW)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
+        val lore = msgList("gui.main-menu.create-auction.lore").toMutableList()
 
         meta.lore(lore)
         item.itemMeta = meta

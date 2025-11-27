@@ -4,7 +4,6 @@ import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.model.AuctionHistoryItem
 import cloud.coffeesystems.auctionmaster.model.AuctionStatus
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -17,6 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 /** GUI for viewing past auction items (sold + expired) with filters */
 class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
@@ -39,6 +39,15 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
     private var isSwitchingPage = false
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+    private fun formatCurrency(value: Double): String = String.format(Locale.US, "%.2f", value)
+
+    private fun msg(key: String, vararg args: Any?) =
+            plugin.messageManager.get(key, *args).decoration(TextDecoration.ITALIC, false)
+
+    private fun msgList(key: String, vararg args: Any?): List<Component> =
+            plugin.messageManager.getList(key, *args).map {
+                it.decoration(TextDecoration.ITALIC, false)
+            }
 
     // Store combined data
     private data class PastItem(
@@ -57,7 +66,7 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
         currentPage = page
         currentFilter = filter
 
-        val title = plugin.messageManager.get("gui.past-items.title")
+        val title = msg("gui.past-items.title")
         inventory = Bukkit.createInventory(null, 54, title)
 
         // Gather all past items
@@ -171,30 +180,19 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
 
         val meta = item.itemMeta
 
-        val name =
+        val nameKey =
                 when (mode) {
-                    FilterMode.ALL -> plugin.messageManager.get("gui.past-items.filter-all")
-                    FilterMode.SOLD -> plugin.messageManager.get("gui.past-items.filter-sold")
-                    FilterMode.EXPIRED -> plugin.messageManager.get("gui.past-items.filter-expired")
+                    FilterMode.ALL -> "gui.past-items.filter-all"
+                    FilterMode.SOLD -> "gui.past-items.filter-sold"
+                    FilterMode.EXPIRED -> "gui.past-items.filter-expired"
                 }
+        val loreKey = "$nameKey-lore"
 
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false).decoration(TextDecoration.BOLD, isActive))
-
-        val lore = mutableListOf<Component>()
-        lore.add(Component.empty())
-
+        meta.displayName(msg(nameKey).decoration(TextDecoration.BOLD, isActive))
+        val lore = msgList(loreKey).toMutableList()
         if (isActive) {
-            lore.add(
-                    Component.text("✓ Active", NamedTextColor.GREEN)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-        } else {
-            lore.add(
-                    Component.text("Click to filter", NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
+            lore.add(msg("gui.past-items.filter-active"))
         }
-
         meta.lore(lore)
         item.itemMeta = meta
         return item
@@ -204,42 +202,29 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
         val item = pastItem.item.clone()
         val meta = item.itemMeta
 
-        val lore = meta.lore()?.toMutableList() ?: mutableListOf()
-        lore.add(Component.empty())
-
         when (pastItem.type) {
             FilterMode.SOLD -> {
-                lore.add(
-                        Component.text("✓ PURCHASED", NamedTextColor.GREEN)
-                                .decoration(TextDecoration.ITALIC, false)
-                                .decoration(TextDecoration.BOLD, true)
+                val lore = meta.lore()?.toMutableList() ?: mutableListOf()
+                lore.add(Component.empty())
+                lore.addAll(
+                        msgList(
+                                "gui.past-items.sold-lore",
+                                formatCurrency(pastItem.price),
+                                pastItem.otherPlayer,
+                                dateFormat.format(pastItem.timestamp)
+                        )
                 )
-                lore.add(
-                        Component.text("Price: $${pastItem.price}", NamedTextColor.GOLD)
-                                .decoration(TextDecoration.ITALIC, false)
-                )
-                lore.add(
-                        Component.text("Seller: ${pastItem.otherPlayer}", NamedTextColor.GRAY)
-                                .decoration(TextDecoration.ITALIC, false)
-                )
-                lore.add(
-                        Component.text("Date: ${dateFormat.format(pastItem.timestamp)}", NamedTextColor.GRAY)
-                                .decoration(TextDecoration.ITALIC, false)
-                )
+                meta.lore(lore)
             }
             FilterMode.EXPIRED -> {
-                lore.add(
-                        Component.text("✗ EXPIRED", NamedTextColor.RED)
-                                .decoration(TextDecoration.ITALIC, false)
-                                .decoration(TextDecoration.BOLD, true)
-                )
+                val lore = meta.lore()?.toMutableList() ?: mutableListOf()
                 lore.add(Component.empty())
-                lore.add(plugin.messageManager.get("gui.past-items.click-to-claim"))
+                lore.addAll(msgList("gui.past-items.expired-lore"))
+                lore.add(msg("gui.past-items.click-to-claim"))
+                meta.lore(lore)
             }
             else -> {}
         }
-
-        meta.lore(lore)
         item.itemMeta = meta
         return item
     }
@@ -248,8 +233,8 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(material)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get(nameKey)
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg(nameKey))
+        meta.lore(msgList("$nameKey-lore"))
 
         item.itemMeta = meta
         return item
@@ -259,8 +244,8 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.EMERALD)
         val meta = item.itemMeta
 
-        val name = plugin.messageManager.get("gui.auction-house.refresh")
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg("gui.auction-house.refresh"))
+        meta.lore(msgList("gui.auction-house.refresh-lore"))
 
         item.itemMeta = meta
         return item
@@ -270,10 +255,8 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.BARRIER)
         val meta = item.itemMeta
 
-        meta.displayName(
-                Component.text("Back to Menu", NamedTextColor.RED)
-                        .decoration(TextDecoration.ITALIC, false)
-        )
+        meta.displayName(msg("gui.controls.back"))
+        meta.lore(msgList("gui.controls.back-lore"))
 
         item.itemMeta = meta
         return item
@@ -283,8 +266,9 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
         val item = ItemStack(Material.PAPER)
         val meta = item.itemMeta
 
-        val pageInfo = plugin.messageManager.get("auction.list.page-info", currentPage, totalPages)
-        meta.displayName(pageInfo.decoration(TextDecoration.ITALIC, false))
+        val pageInfo = msg("auction.list.page-info", currentPage, totalPages)
+        meta.displayName(pageInfo)
+        meta.lore(msgList("gui.controls.page-info-lore"))
 
         item.itemMeta = meta
         return item

@@ -88,10 +88,7 @@ class DatabaseMigrationService(private val plugin: AuctionMaster) {
                                                                                 )
 
                                                                         val confirmComponent =
-                                                                                plugin.messageManager
-                                                                                        .get("prefix")
-                                                                                        .append(Component.text(" "))
-                                                                                        .append(confirmPrefix)
+                                                                                confirmPrefix
                                                                                         .append(
                                                                                                 confirmCommand
                                                                                                         .clickEvent(
@@ -107,7 +104,10 @@ class DatabaseMigrationService(private val plugin: AuctionMaster) {
                                                                                         )
                                                                                         .append(confirmSuffix)
 
-                                                                        sender.sendMessage(confirmComponent)
+                                                                        plugin.messageManager.sendComponent(
+                                                                                sender,
+                                                                                confirmComponent
+                                                                        )
                                                                 } else {
                                                                         plugin.messageManager.send(
                                                                                 sender,

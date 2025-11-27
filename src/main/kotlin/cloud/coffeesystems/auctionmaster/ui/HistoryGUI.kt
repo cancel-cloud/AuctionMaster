@@ -4,8 +4,8 @@ import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.model.AuctionHistoryItem
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -32,6 +32,15 @@ class HistoryGUI(private val plugin: AuctionMaster, private val targetPlayer: Of
     private lateinit var viewer: Player
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
     private var isSwitchingPage = false
+    private fun msg(key: String, vararg args: Any?) =
+            plugin.messageManager.get(key, *args).decoration(TextDecoration.ITALIC, false)
+
+    private fun msgList(key: String, vararg args: Any?): List<Component> =
+            plugin.messageManager.getList(key, *args).map {
+                it.decoration(TextDecoration.ITALIC, false)
+            }
+
+    private fun formatCurrency(value: Double): String = String.format(Locale.US, "%.2f", value)
 
     init {
         // Listener registration moved to open()
@@ -43,7 +52,7 @@ class HistoryGUI(private val plugin: AuctionMaster, private val targetPlayer: Of
 
         val history = plugin.auctionManager.getHistory(targetPlayer.uniqueId)
 
-        val title = plugin.messageManager.get("gui.history.title", targetPlayer.name ?: "Unknown")
+        val title = msg("gui.history.title", targetPlayer.name ?: "Unknown")
         inventory = Bukkit.createInventory(null, 54, title)
 
         val totalPages = (history.size + itemsPerPage - 1) / itemsPerPage
@@ -92,15 +101,14 @@ class HistoryGUI(private val plugin: AuctionMaster, private val targetPlayer: Of
     private fun createHistoryItem(historyItem: AuctionHistoryItem): ItemStack {
         val item = historyItem.item.clone()
         val meta = item.itemMeta
-        val lore = mutableListOf<Component>()
-
-        lore.add(Component.empty())
-        lore.add(Component.text("Price: $${historyItem.price}").color(NamedTextColor.GOLD))
-        lore.add(Component.text("Seller: ${historyItem.sellerName}").color(NamedTextColor.GRAY))
-        lore.add(
-                Component.text("Date: ${dateFormat.format(Date(historyItem.timestamp))}")
-                        .color(NamedTextColor.GRAY)
-        )
+        val lore =
+                msgList(
+                                "gui.history.item-lore",
+                                formatCurrency(historyItem.price),
+                                historyItem.sellerName,
+                                dateFormat.format(Date(historyItem.timestamp))
+                        )
+                        .toMutableList()
 
         meta.lore(lore)
         item.itemMeta = meta
@@ -110,8 +118,8 @@ class HistoryGUI(private val plugin: AuctionMaster, private val targetPlayer: Of
     private fun createNavigationItem(material: Material, nameKey: String): ItemStack {
         val item = ItemStack(material)
         val meta = item.itemMeta
-        val name = plugin.messageManager.get(nameKey)
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg(nameKey))
+        meta.lore(msgList("$nameKey-lore"))
         item.itemMeta = meta
         return item
     }
@@ -119,8 +127,8 @@ class HistoryGUI(private val plugin: AuctionMaster, private val targetPlayer: Of
     private fun createCloseItem(): ItemStack {
         val item = ItemStack(Material.BARRIER)
         val meta = item.itemMeta
-        val name = plugin.messageManager.get("gui.auction-house.close")
-        meta.displayName(name.decoration(TextDecoration.ITALIC, false))
+        meta.displayName(msg("gui.auction-house.close"))
+        meta.lore(msgList("gui.auction-house.close-lore"))
         item.itemMeta = meta
         return item
     }
@@ -128,8 +136,9 @@ class HistoryGUI(private val plugin: AuctionMaster, private val targetPlayer: Of
     private fun createPageInfoItem(currentPage: Int, totalPages: Int): ItemStack {
         val item = ItemStack(Material.PAPER)
         val meta = item.itemMeta
-        val pageInfo = plugin.messageManager.get("auction.list.page-info", currentPage, totalPages)
-        meta.displayName(pageInfo.decoration(TextDecoration.ITALIC, false))
+        val pageInfo = msg("auction.list.page-info", currentPage, totalPages)
+        meta.displayName(pageInfo)
+        meta.lore(msgList("gui.controls.page-info-lore"))
         item.itemMeta = meta
         return item
     }

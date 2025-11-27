@@ -1,56 +1,56 @@
 # AuctionMaster Deutsche Nachrichten
 # Verwende {0}, {1}, usw. für Platzhalter
 
-prefix: "&8[&6⚑ &eAuctionMaster&6 ⚑&8]&r"
+prefix: "&8[&b■&8] &eAuctionMaster&8 »"
 
 # Allgemeine Nachrichten
-reload-success: "&aKonfiguration und Nachrichten erfolgreich neu geladen!"
-no-permission: "&cDu hast keine Berechtigung dafür!"
-player-only: "&cDieser Befehl kann nur von Spielern verwendet werden!"
-invalid-syntax: "&cUngültige Syntax! Verwende: &e{0}"
+reload-success: "&aEinstellungen und Nachrichten neu geladen."
+no-permission: "&cDu hast keine Berechtigung."
+player-only: "&cNur Spieler können diesen Befehl nutzen."
+invalid-syntax: "&cUngültige Syntax. Verwende: &f{0}"
 lockdown:
-  active: "&cAuctionMaster befindet sich derzeit im LOCKDOWN."
-  enabled: "&cAuctionMaster wurde in den LOCKDOWN versetzt!"
-  disabled: "&aDer LOCKDOWN-Modus von AuctionMaster wurde deaktiviert."
+  active: "&cAuctionMaster befindet sich im Lockdown."
+  enabled: "&cLockdown-Modus aktiviert."
+  disabled: "&aLockdown-Modus deaktiviert."
 
 # Datenbank Nachrichten
 database:
-  connecting: "&eVerbinde mit Datenbank..."
-  connected: "&aErfolgreich mit Datenbank verbunden!"
-  connection-failed: "&c&lDATENBANKVERBINDUNG FEHLGESCHLAGEN!"
-  connection-error: "&cKonnte keine Datenbankverbindung herstellen. Bitte überprüfe die Konfiguration."
-  operator-warning: "&c&lWARNUNG: &eDie AuctionMaster Datenbank ist nicht verfügbar! Bitte kontaktiere einen Administrator."
-  reconnecting: "&eVersuche Datenbankverbindung wiederherzustellen..."
-  reconnect-success: "&aDatenbankverbindung wiederhergestellt!"
+  connecting: "&7Verbinde mit der Datenbank..."
+  connected: "&aDatenbankverbindung hergestellt."
+  connection-failed: "&cDatenbankverbindung fehlgeschlagen."
+  connection-error: "&cKonnte nicht verbinden. Prüfe die Konfiguration."
+  operator-warning: "&cDatenbank nicht verfügbar. Bitte Admin kontaktieren."
+  reconnecting: "&7Versuche die Verbindung wiederherzustellen..."
+  reconnect-success: "&aVerbindung wiederhergestellt."
 
 # Auktions Nachrichten
 auction:
   # Auktionen Erstellen
   create:
-    success: "&a&l✓ &aAuktion erfolgreich erstellt!"
-    details: "&7Gegenstand: &f{0} &7| Preis: &6${1} &7| Dauer: &e{2}"
-    no-item: "&cDu musst einen Gegenstand in der Hand halten, um eine Auktion zu erstellen!"
-    invalid-price: "&cBitte gib einen gültigen Preis an! Beispiel: &e/auction create 100"
-    price-too-low: "&cDer Mindestauktionspreis beträgt &e${0}"
-    price-too-high: "&cDer Höchstauktionspreis beträgt &e${0}"
-    price-too-low-chat: "&cDer Preis muss mindestens &e${0} &csein. Gib einen neuen Preis ein oder tippe &f'cancel'&c."
-    already-active: "&cDu hast bereits eine aktive Auktion! Bitte warte bis sie abläuft oder verkauft wird."
-    max-reached: "&cDu hast die maximale Anzahl aktiver Auktionen erreicht ({0})."
-    blacklisted-item: "&cDieser Gegenstand kann nicht versteigert werden!"
-    chat-prompt: "&eGib einen Auktionspreis im Chat ein (tippe 'cancel' zum Abbrechen)."
-    price-not-set: "&cBitte lege zuerst einen Preis fest!"
-    fee-insufficient: "&cDu benötigst ${0} für die Gebühr, hast aber nur ${1}."
-    fee-charged: "&6Erstellungsgebühr abgebucht: ${0}"
-    failed: "&cAuktion konnte nicht erstellt werden. Bitte versuche es erneut."
-    failed-refund: "&cAuktion konnte nicht erstellt werden. Die Gebühr wurde erstattet."
-    cancelled: "&eAuktionserstellung abgebrochen."
-    price-input-cancelled: "&ePreiseingabe abgebrochen."
-    price-invalid: "&cUngültiger Preis! Gib eine Zahl ein oder tippe 'cancel'."
-    price-retry: "&eBitte versuche es erneut:"
-    price-enter-new: "&eGib einen neuen Preis ein oder tippe 'cancel'."
+    success: "&aAuktion erstellt."
+    details: "&7Item: &f{0} &7| Preis: &f${1} &7| Dauer: &f{2}"
+    no-item: "&cHalte ein Item in der Hand, um eine Auktion zu erstellen."
+    invalid-price: "&cBitte gib einen gültigen Preis an. Beispiel: &f/auction create 100"
+    price-too-low: "&cDer Mindestpreis beträgt &f${0}&c."
+    price-too-high: "&cDer Höchstpreis beträgt &f${0}&c."
+    price-too-low-chat: "&cDer Preis muss mindestens &f${0}&c sein. Gib einen neuen Preis ein oder tippe &f'cancel'&c."
+    already-active: "&cDu hast bereits eine aktive Auktion."
+    max-reached: "&cDu hast das Limit von {0} Auktionen erreicht."
+    blacklisted-item: "&cDieses Item kann nicht versteigert werden."
+    chat-prompt: "&7Gib einen Preis im Chat ein (tippe 'cancel' zum Abbrechen)."
+    price-not-set: "&cLege zuerst einen Preis fest."
+    fee-insufficient: "&cDu benötigst &f${0}&c, hast aber nur &f${1}&c."
+    fee-charged: "&7Erstellungsgebühr abgebucht: &f${0}"
+    failed: "&cAuktion konnte nicht erstellt werden. Versuche es erneut."
+    failed-refund: "&cAuktion fehlgeschlagen. Gebühr erstattet."
+    cancelled: "&7Auktionserstellung abgebrochen."
+    price-input-cancelled: "&7Preiseingabe abgebrochen."
+    price-invalid: "&cUngültiger Preis. Gib eine Zahl ein oder tippe 'cancel'."
+    price-retry: "&7Versuche es erneut:"
+    price-enter-new: "&7Gib einen neuen Preis ein oder tippe 'cancel'."
     price-set: "&aPreis gesetzt auf ${0}"
-    duration-format: "&cUngültiges Zeitformat. Verwende z. B. 4h, 6h, 8h, 12h, 1d, 2d oder 7d."
-    duration-unsupported: "&cDiese Dauer wird nicht unterstützt. Verwende eine der folgenden: &e{0}"
+    duration-format: "&cUngültiges Zeitformat. Nutze z. B. 4h, 6h oder 1d."
+    duration-unsupported: "&cDiese Dauer wird nicht unterstützt. Verfügbar: &f{0}"
 
   # Auktionen Auflisten
   list:
@@ -59,41 +59,41 @@ auction:
     footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     item-format: "&6⚑ &f{0} &7- &6${1} &7von &e{2}"
     hover-info: "&7Klicke um diesen Gegenstand zu kaufen\n&7Verbleibende Zeit: &e{0}\n&7Verkäufer: &e{1}"
-    no-auctions: "&eMomentan sind keine aktiven Auktionen verfügbar."
-    page-info: "&7Seite &e{0}&7/&e{1}"
+    no-auctions: "&7Aktuell gibt es keine aktiven Auktionen."
+    page-info: "&6◆ &e&lSeite {0}&7/&f{1}"
     next-page: "&a→ Nächste Seite"
     prev-page: "&c← Vorherige Seite"
 
   # Auktionen Kaufen
   buy:
-    success: "&a&l✓ &aDu hast erfolgreich &f{0} &afür &6${1} &agekauft!"
-    not-found: "&cDiese Auktion existiert nicht mehr!"
-    own-auction: "&cDu kannst deine eigene Auktion nicht kaufen!"
-    insufficient-funds: "&cDu benötigst noch &6${0} &cum diesen Gegenstand zu kaufen!"
-    inventory-full: "&cDein Inventar ist voll! Schaffe Platz und versuche es erneut."
-    already-sold: "&cDiese Auktion wurde bereits verkauft!"
-    seller-notification: "&a&l✓ &aDeine Auktion für &f{0} &awurde für &6${1} &averkauft!"
+    success: "&aDu hast &f{0} &afür &f${1} gekauft."
+    not-found: "&cDiese Auktion existiert nicht mehr."
+    own-auction: "&cDu kannst deine eigene Auktion nicht kaufen."
+    insufficient-funds: "&cDir fehlen &f${0}&c."
+    inventory-full: "&cDein Inventar ist voll."
+    already-sold: "&cDiese Auktion wurde bereits verkauft."
+    seller-notification: "&aDeine Auktion für &f{0} &awurde für &f${1} verkauft."
 
   # Auktionen Abbrechen
   cancel:
-    success: "&a&l✓ &aAuktion abgebrochen! Dein Gegenstand wurde zurückgegeben."
-    not-found: "&cDu hast keine aktive Auktion mit dieser ID!"
-    none-active: "&cDu hast keine aktiven Auktionen!"
-    failed: "&cAuktion konnte nicht abgebrochen werden. Bitte versuche es erneut."
-    inventory-full: "&cDein Inventar ist voll! Schaffe Platz bevor du diese Auktion abbrichst."
+    success: "&aAuktion abgebrochen. Dein Item wurde zurückgegeben."
+    not-found: "&cDu hast keine Auktion mit dieser ID."
+    none-active: "&cDu hast keine aktiven Auktionen."
+    failed: "&cAuktion konnte nicht abgebrochen werden. Versuche es erneut."
+    inventory-full: "&cDein Inventar ist voll. Räume erst Platz frei."
 
   view:
-    no-auctions: "&cSpieler &f{0} &chat keine aktiven Auktionen!"
-    player-not-found: "&cSpieler nicht gefunden!"
+    no-auctions: "&c{0} hat keine aktiven Auktionen."
+    player-not-found: "&cSpieler nicht gefunden."
     viewing: "&aZeige Auktionen von &f{0}"
-    usage: "&cBenutzung: &e/auction view <spieler>"
+    usage: "&7Verwendung: &f/auction view <spieler>"
 
   invalid-id: "&cUngültige Auktions-ID."
 
   # Auslaufende Auktionen
   expire:
-    notification: "&eDeine Auktion für &f{0} &eist abgelaufen und wurde an dich zurückgegeben."
-    inventory-full: "&cDeine Auktion für &f{0} &cist abgelaufen, aber dein Inventar war voll! Gegenstand für später gespeichert."
+    notification: "&7Deine Auktion für &f{0} &7ist abgelaufen und wurde zurückgegeben."
+    inventory-full: "&cDeine Auktion für &f{0} &cist abgelaufen, aber dein Inventar war voll. Item wurde gespeichert."
 
   # Auktions Info
   info:
@@ -107,43 +107,213 @@ auction:
 
 # GUI Nachrichten
 gui:
-  auction-house:
-    title: "⚑ Auktionshaus"
-    your-auctions: "Deine Auktionen"
-    buy-now: "&a&lJETZT KAUFEN"
-    price: "&6Preis: ${0}"
-    seller: "&7Verkäufer: {0}"
-    time-left: "&eVerbleibende Zeit: {0}"
-    click-to-buy: "&7Klicke zum Kaufen!"
-    click-to-cancel: "&cKlicke zum Abbrechen"
-    no-auctions: "&7Keine aktiven Auktionen"
-    next-page: "&aNächste Seite →"
-    previous-page: "&cVorherige Seite ←"
-    refresh: "&eAngebote Aktualisieren"
-    close: "&cSchließen"
-
+  main-menu:
+    title: "&6◆ &e&lAuktionshaus"
+    browse-all:
+      name: "&6◆ &e&lAlle Auktionen"
+      lore:
+        - "&7Sieh dir jedes Angebot an."
+        - "&7Aktive Auktionen: &f{0}"
+        - ""
+        - "&eZum Stöbern klicken."
+    your-listings:
+      name: "&6◆ &e&lDeine Angebote"
+      lore:
+        - "&7Verwalte alle aktiven Angebote."
+        - "&7Einträge: &f{0}"
+        - ""
+        - "&eZum Verwalten klicken."
+      expiring: "&7Laufen bald ab: &f{0}"
+    past-items:
+      name: "&6◆ &e&lFrühere Items"
+      lore:
+        - "&7Prüfe verkaufte und abgelaufene."
+        - "&7Verkauft: &f{0} &7| Abgelaufen: &f{1}"
+        - ""
+        - "&eZum Prüfen klicken."
+      pending: "&7Abholbereit: &f{0}"
+    create-auction:
+      name: "&6◆ &e&lAuktion erstellen"
+      lore:
+        - "&7Mache aus dem Item ein Angebot."
+        - "&7Halte das Item vor dem Öffnen."
+        - ""
+        - "&eZum Starten klicken."
+  my-listings:
+    title: "&6◆ &e&lDeine aktiven Angebote"
+    click-to-cancel: "&eKlicke, um dieses Angebot zu löschen."
+    expiring-warning: "&c❌ &fLäuft bald ab!"
   past-items:
-    title: "Deine Auktionshistorie"
-    filter-all: "&7Alle anzeigen"
-    filter-sold: "&aVerkäufe anzeigen"
-    filter-expired: "&cAbgelaufene anzeigen"
-    click-to-claim: "&e&lKlicke, um den Gegenstand abzuholen!"
-    claimed: "&a&l✓ &aGegenstand zurück ins Inventar gelegt!"
-    inventory-full: "&cDein Inventar ist voll! Schaffe Platz und versuche es erneut."
+    title: "&6◆ &e&lDeine Auktionshistorie"
+    filter-all: "&6◆ &e&lAlle Items"
+    filter-all-lore:
+      - "&7Zeigt Verkäufe und Ablauf."
+      - ""
+      - "&eZum Filtern klicken."
+    filter-sold: "&6◆ &e&lVerkaufte Items"
+    filter-sold-lore:
+      - "&7Nur erfolgreiche Verkäufe."
+      - ""
+      - "&eZum Filtern klicken."
+    filter-expired: "&6◆ &e&lAbgelaufene Items"
+    filter-expired-lore:
+      - "&7Zeigt unerholte Rückgaben."
+      - ""
+      - "&eZum Filtern klicken."
+    filter-active: "&7Aktiv ausgewählt."
+    click-to-claim: "&eKlicke, um dieses Item abzuholen."
+    claimed: "&aGegenstand wurde ins Inventar gelegt!"
+    inventory-full: "&cDein Inventar ist voll; mache Platz."
+    sold-lore:
+      - "&7Status: &fVerkauft"
+      - "&7Preis: &f${0}"
+      - "&7Verkäufer: &f{1}"
+      - "&7Datum: &f{2}"
+    expired-lore:
+      - "&7Status: &fAbgelaufen"
+      - ""
+      - "&eZum Abholen bereit."
+  auction-house:
+    title: "&6◆ &e&lAuktionshaus"
+    filtered-suffix: " &7- &f{0}"
+    your-auctions: "&6◆ &e&lDeine Auktionen"
+    buy-now: "&6◆ &e&lJetzt kaufen"
+    price: "&7Preis: &f${0}"
+    seller: "&7Verkäufer: &f{0}"
+    time-left: "&7Restzeit: &f{0}"
+    click-to-buy: "&eKlicke zum Kauf."
+    click-to-cancel: "&eKlicke zum Abbrechen."
+    no-auctions: "&7Keine aktiven Auktionen."
+    next-page: "&6◆ &e&lNächste Seite"
+    next-page-lore:
+      - "&7Eine Seite weitergehen."
+      - ""
+      - "&eZum Fortfahren klicken."
+    previous-page: "&6◆ &e&lVorherige Seite"
+    previous-page-lore:
+      - "&7Eine Seite zurückgehen."
+      - ""
+      - "&eZum Zurückklicken."
+    refresh: "&6◆ &e&lAngebote aktualisieren"
+    refresh-lore:
+      - "&7Lädt alle Angebote neu."
+      - ""
+      - "&eZum Aktualisieren klicken."
+    close: "&6◆ &e&lMenü schließen"
+    close-lore:
+      - "&7Zurück zur letzten Ansicht."
+      - ""
+      - "&eZum Schließen klicken."
+  controls:
+    back: "&6◆ &e&lZurück zum Menü"
+    back-lore:
+      - "&7Zur Hauptübersicht."
+      - ""
+      - "&eZum Zurückklicken."
+    page-info-lore:
+      - "&7Seitenfortschritt merken."
+      - ""
+      - "&eWeiter stöbern."
+  confirmation:
+    title: "&6◆ &e&lKauf bestätigen"
+    confirm: "&6◆ &e&lBestätigen"
+    confirm-lore:
+      - "&7Bestätige den Kauf."
+      - ""
+      - "&eZum Bestätigen klicken."
+    cancel: "&6◆ &e&lAbbrechen"
+    cancel-lore:
+      - "&7Zurück ohne Änderungen."
+      - ""
+      - "&eZum Abbrechen klicken."
+  cancel-confirmation:
+    title: "&6◆ &e&lAuktion abbrechen"
+    confirm: "&6◆ &e&lAuktion beenden"
+    confirm-lore:
+      - "&7Dieses Angebot entfernen."
+      - ""
+      - "&eZum Abbrechen klicken."
+    back: "&6◆ &e&lZurück"
+    back-lore:
+      - "&7Zur Auktion zurück."
+      - ""
+      - "&eZum Zurückklicken."
+  history:
+    title: "&6◆ &e&lHistorie: {0}"
+    item-lore:
+      - "&7Preis: &f${0}"
+      - "&7Verkäufer: &f{1}"
+      - "&7Datum: &f{2}"
+      - ""
+      - "&eDatensatz ansehen."
+  create-auction:
+    title: "&6◆ &e&lAuktion erstellen"
+    display:
+      amount: "&7Menge: &f{0}"
+    price:
+      name: "&6◆ &e&lPreis festlegen"
+      lore-unset:
+        - "&7Wähle einen Startpreis."
+        - "&7Warte auf Eingabe."
+        - ""
+        - "&eZum Eingeben klicken."
+      lore-set:
+        - "&7Passe den Preis an."
+        - "&7Aktueller Preis: &f${0}"
+        - ""
+        - "&eZum Bearbeiten klicken."
+    duration:
+      name: "&6◆ &e&lDauer wählen"
+      lore:
+        - "&7Aktuell: &f{0}"
+        - "&7Grundgebühr: &f${1}"
+        - "&7Prozentanteil: &f{2}%"
+        - ""
+        - "&eZum Wechseln klicken."
+    confirm:
+      name: "&6◆ &e&lAuktion starten"
+      lore-disabled:
+        - "&7Lege zuerst einen Preis fest."
+        - ""
+        - "&ePreis setzen zum Fortfahren."
+      lore-ready:
+        - "&7Gebühren prüfen und starten."
+        - "&7Erstellungsgebühr: &f${0}"
+        - ""
+        - "&eZum Bestätigen klicken."
+    cancel:
+      name: "&6◆ &e&lEinrichtung abbrechen"
+      lore:
+        - "&7Stoppt und gibt das Item zurück."
+        - ""
+        - "&eZum Abbrechen klicken."
+  fee-info:
+      name: "&6◆ &e&lGebührenübersicht"
+      lore:
+        - "&7Grundgebühr: &f${0}"
+        - "&7Prozentgebühr: &f${1} &7({2}%)"
+        - "&7Gesamtgebühr: &f${3}"
+        - ""
+        - "&eGebühreninfo."
+
+# Wirtschaft
+economy:
+  not-available: "&cDas Wirtschaftssystem ist nicht verfügbar."
+  transaction-failed: "&cTransaktion fehlgeschlagen. Versuche es erneut."
 
 # Verkaufte Auktionen Nachrichten
 auction-sold:
-  notification: "&a&l✓ &aDeine Auktion für &f{0} &awurde für &6${1} &averkauft!"
-  summary: "&a&l✓ &aWährend du offline warst, wurden &e{0} &aGegenstände für &6${1} &averkauft! &7(Fahre mit der Maus darüber)"
-  summary-hover: "&7Verkaufte Gegenstände:\n{0}"
-  summary-item-format: "&7- &f{0} &7für &6${1}"
+  notification: "&aDeine Auktion für &f{0} &awurde für &f${1} verkauft."
+  summary: "&aWährend du offline warst, wurden &f{0} &aItems für &f${1} verkauft. &7(Fahre mit der Maus darüber)"
+  summary-hover: "&7Verkaufte Items:\n{0}"
+  summary-item-format: "&7- &f{0} &7für &f${1}"
 
 # Benachrichtigungen
 notifications:
-  sale-action-bar: "&a✓ Dein {0} wurde für ${1} verkauft!"
-  expiry-action-bar: "&c✗ Auktion für {0} ist abgelaufen"
-  join-summary: "&6Während du offline warst: &a{0} Gegenstände verkauft &7| &c{1} Auktionen abgelaufen"
-  expired-summary: "&c✗ {0} Auktion(en) sind abgelaufen"
+  sale-action-bar: "&a{0} wurde für ${1} verkauft."
+  expiry-action-bar: "&cAuktion für {0} ist abgelaufen."
+  join-summary: "&7Während du offline warst: &a{0} verkauft &7| &c{1} abgelaufen"
+  expired-summary: "&c{0} Auktion(en) sind abgelaufen."
 
 # Zeitformate
 time:
@@ -155,39 +325,39 @@ time:
 
 # Admin Nachrichten
 admin:
-  reload: "&aPlugin erfolgreich neu geladen!"
-  clear-auctions: "&e{0} &aAuktionen gelöscht!"
-  auction-removed: "&aAuktion ID &e{0} &aentfernt!"
-  player-auctions-cleared: "&aAlle Auktionen von &e{0} &agelöscht!"
+  reload: "&aPlugin neu geladen."
+  clear-auctions: "&a{0} Auktionen gelöscht."
+  auction-removed: "&aAuktion mit ID &f{0} entfernt."
+  player-auctions-cleared: "&aAlle Auktionen von &f{0} gelöscht."
   database-status: "&7Datenbankstatus: {0}"
   database-connected: "&aVerbunden"
   database-disconnected: "&cGetrennt"
-  clear-unimplemented: "&eDie Löschfunktion ist noch nicht implementiert."
+  clear-unimplemented: "&7Die Löschfunktion ist noch nicht implementiert."
 
 migration:
-  sqlite-only: "&cMigration ist nur verfügbar, wenn eine SQLite-Datenbank verwendet wird."
-  lockdown-enabled: "&eLockdown-Modus für die Migration aktiviert."
+  sqlite-only: "&cMigration ist nur mit SQLite verfügbar."
+  lockdown-enabled: "&7Lockdown-Modus für die Migration aktiviert."
   stats:
-    header: "&6Migrationsstatistiken:"
-    auctions: "&7- Auktionen: &e{0}"
-    transactions: "&7- Transaktionen: &e{0}"
+    header: "&7Migrationsstatistiken:"
+    auctions: "&7- Auktionen: &f{0}"
+    transactions: "&7- Transaktionen: &f{0}"
     error: "&cFehler beim Abrufen der Statistiken: &f{0}"
   postgres:
     verified: "&aPostgreSQL-Verbindung erfolgreich überprüft."
-    failed: "&cPostgreSQL-Verbindung fehlgeschlagen!"
+    failed: "&cPostgreSQL-Verbindung fehlgeschlagen."
     error: "&cFehler bei der PostgreSQL-Verbindung: &f{0}"
   confirm:
     prefix: "&eTippe "
     command: "&6/auction migrate confirm"
-    suffix: "&e um die Migration zu starten."
-    warning: "&cDadurch werden Daten in der Zieldatenbank überschrieben!"
-  starting: "&aStarte Migration..."
+    suffix: "&e, um die Migration zu starten."
+    warning: "&cDadurch werden Daten in der Zieldatenbank überschrieben."
+  starting: "&7Starte Migration..."
   progress:
     auctions: "&7{0} Auktionen migriert..."
     transactions: "&7{0} Transaktionen migriert..."
-  auctions-complete: "&aAuktionsmigration abgeschlossen (&e{0}&a Datensätze)."
-  transactions-complete: "&aTransaktionsmigration abgeschlossen (&e{0}&a Datensätze)."
-  success: "&aMigration erfolgreich abgeschlossen! Aktualisiere die config.yml auf PostgreSQL und starte neu."
+  auctions-complete: "&aAuktionsmigration abgeschlossen (&f{0}&a Datensätze)."
+  transactions-complete: "&aTransaktionsmigration abgeschlossen (&f{0}&a Datensätze)."
+  success: "&aMigration abgeschlossen. Passe die config.yml an und starte neu."
   failed: "&cMigration fehlgeschlagen: &f{0}"
 
 # Hilfe Nachrichten

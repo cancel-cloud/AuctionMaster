@@ -1,56 +1,56 @@
 # AuctionMaster English Messages
 # Use {0}, {1}, etc. for placeholders
 
-prefix: "&8[&6⚑ &eAuctionMaster&6 ⚑&8]&r"
+prefix: "&8[&b■&8] &eAuctionMaster&8 »"
 
 # General Messages
-reload-success: "&aConfiguration and messages reloaded successfully!"
-no-permission: "&cYou don't have permission to do that!"
-player-only: "&cThis command can only be used by players!"
-invalid-syntax: "&cInvalid syntax! Use: &e{0}"
+reload-success: "&aSettings and messages reloaded."
+no-permission: "&cYou don't have permission."
+player-only: "&cOnly players can use this command."
+invalid-syntax: "&cInvalid syntax. Use: &f{0}"
 lockdown:
-  active: "&cAuctionMaster is currently in LOCKDOWN mode."
-  enabled: "&cAuctionMaster has been put into LOCKDOWN mode!"
-  disabled: "&aAuctionMaster lockdown mode disabled."
+  active: "&cAuctionMaster is in lockdown mode."
+  enabled: "&cLockdown mode enabled."
+  disabled: "&aLockdown mode disabled."
 
 # Database Messages
 database:
-  connecting: "&eConnecting to database..."
-  connected: "&aSuccessfully connected to database!"
-  connection-failed: "&c&lDATABASE CONNECTION FAILED!"
-  connection-error: "&cCould not establish database connection. Please check your configuration."
-  operator-warning: "&c&lWARNING: &eThe AuctionMaster database is not available! Please contact an administrator."
-  reconnecting: "&eAttempting to reconnect to database..."
-  reconnect-success: "&aDatabase connection restored!"
+  connecting: "&7Connecting to the database..."
+  connected: "&aDatabase connection established."
+  connection-failed: "&cDatabase connection failed."
+  connection-error: "&cCould not connect. Check your configuration."
+  operator-warning: "&cDatabase unavailable. Contact an administrator."
+  reconnecting: "&7Reconnecting to the database..."
+  reconnect-success: "&aDatabase connection restored."
 
 # Auction Messages
 auction:
   # Creating Auctions
   create:
-    success: "&a&l✓ &aAuction created successfully!"
-    details: "&7Item: &f{0} &7| Price: &6${1} &7| Duration: &e{2}"
-    no-item: "&cYou need to hold an item in your hand to create an auction!"
-    invalid-price: "&cPlease specify a valid price! Example: &e/auction create 100"
-    price-too-low: "&cThe minimum auction price is &e${0}"
-    price-too-high: "&cThe maximum auction price is &e${0}"
-    price-too-low-chat: "&cPrice must be at least &e${0}&c. Enter a new price or type &f'cancel'&c."
-    already-active: "&cYou already have an active auction! Please wait until it expires or is sold."
-    max-reached: "&cYou have reached the maximum number of active auctions ({0})."
-    blacklisted-item: "&cThis item cannot be auctioned!"
-    chat-prompt: "&eEnter an auction price in chat (type 'cancel' to abort)."
-    price-not-set: "&cPlease set a price first!"
-    fee-insufficient: "&cYou need ${0} for the creation fee but only have ${1}."
-    fee-charged: "&6Creation fee charged: ${0}"
-    failed: "&cFailed to create auction. Please try again."
-    failed-refund: "&cFailed to create auction. Your fee was refunded."
-    cancelled: "&eAuction creation cancelled."
-    price-input-cancelled: "&ePrice input cancelled."
-    price-invalid: "&cInvalid price! Enter a number or type 'cancel'."
-    price-retry: "&ePlease try again:"
-    price-enter-new: "&eEnter a new price or type 'cancel'."
+    success: "&aAuction created."
+    details: "&7Item: &f{0} &7| Price: &f${1} &7| Duration: &f{2}"
+    no-item: "&cHold an item in your hand to create an auction."
+    invalid-price: "&cEnter a valid price. Example: &f/auction create 100"
+    price-too-low: "&cMinimum price is &f${0}&c."
+    price-too-high: "&cMaximum price is &f${0}&c."
+    price-too-low-chat: "&cPrice must be at least &f${0}&c. Enter a new price or type &f'cancel'&c."
+    already-active: "&cYou already have an active auction."
+    max-reached: "&cYou reached the limit of {0} active auctions."
+    blacklisted-item: "&cThat item cannot be auctioned."
+    chat-prompt: "&7Enter an auction price in chat (type 'cancel' to abort)."
+    price-not-set: "&cSet a price first."
+    fee-insufficient: "&cYou need &f${0} &cbut only have &f${1}&c."
+    fee-charged: "&7Creation fee charged: &f${0}"
+    failed: "&cCould not create the auction. Try again."
+    failed-refund: "&cAuction failed. Your fee was refunded."
+    cancelled: "&7Auction creation cancelled."
+    price-input-cancelled: "&7Price entry cancelled."
+    price-invalid: "&cInvalid price. Enter a number or type 'cancel'."
+    price-retry: "&7Try again:"
+    price-enter-new: "&7Enter a new price or type 'cancel'."
     price-set: "&aPrice set to ${0}"
-    duration-format: "&cInvalid duration format. Use values like 4h, 6h, 8h, 12h, 1d, 2d, or 7d."
-    duration-unsupported: "&cUnsupported duration. Use one of: &e{0}"
+    duration-format: "&cInvalid duration format. Use values like 4h, 6h, or 1d."
+    duration-unsupported: "&cUnsupported duration. Use one of: &f{0}"
 
   # Listing Auctions
   list:
@@ -59,42 +59,42 @@ auction:
     footer: "&8&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     item-format: "&6⚑ &f{0} &7- &6${1} &7by &e{2}"
     hover-info: "&7Click to purchase this item\n&7Time remaining: &e{0}\n&7Seller: &e{1}"
-    no-auctions: "&eNo active auctions available at the moment."
-    page-info: "&7Page &e{0}&7/&e{1}"
+    no-auctions: "&7No active auctions right now."
+    page-info: "&6◆ &e&lPage {0}&7/&f{1}"
     next-page: "&a→ Next Page"
     prev-page: "&c← Previous Page"
 
   # Buying Auctions
   buy:
-    success: "&a&l✓ &aYou successfully purchased &f{0} &afor &6${1}&a!"
-    not-found: "&cThis auction no longer exists!"
-    own-auction: "&cYou cannot buy your own auction!"
-    insufficient-funds: "&cYou need &6${0} &cmore to purchase this item!"
-    inventory-full: "&cYour inventory is full! Make some space and try again."
-    already-sold: "&cThis auction has already been sold!"
-    seller-notification: "&a&l✓ &aYour auction for &f{0} &awas sold for &6${1}&a!"
+    success: "&aYou purchased &f{0} &afor &f${1}&a."
+    not-found: "&cThat auction no longer exists."
+    own-auction: "&cYou cannot buy your own auction."
+    insufficient-funds: "&cYou need &f${0} &cmore."
+    inventory-full: "&cYour inventory is full."
+    already-sold: "&cThis auction was already sold."
+    seller-notification: "&aYour auction for &f{0} &asold for &f${1}&a."
 
   # Canceling Auctions
   cancel:
-    success: "&a&l✓ &aAuction canceled! Your item has been returned."
-    not-found: "&cYou don't have any active auctions to cancel!"
-    none-active: "&cYou don't have any active auctions!"
-    failed: "&cFailed to cancel auction. Please try again."
-    inventory-full: "&cYour inventory is full! Make space before canceling this auction."
+    success: "&aAuction cancelled. Your item was returned."
+    not-found: "&cYou have no auction with that ID."
+    none-active: "&cYou have no active auctions."
+    failed: "&cCould not cancel the auction. Try again."
+    inventory-full: "&cYour inventory is full. Clear space first."
 
   # Viewing Auctions
   view:
-    no-auctions: "&cPlayer &f{0} &cdoes not have any active auctions!"
-    player-not-found: "&cPlayer not found!"
+    no-auctions: "&c{0} has no active auctions."
+    player-not-found: "&cPlayer not found."
     viewing: "&aViewing auctions from &f{0}"
-    usage: "&cUsage: &e/auction view <player>"
+    usage: "&7Usage: &f/auction view <player>"
 
   invalid-id: "&cInvalid auction ID."
 
   # Expiring Auctions
   expire:
-    notification: "&eYour auction for &f{0} &ehas expired and been returned to you."
-    inventory-full: "&cYour auction for &f{0} &cexpired, but your inventory was full! Item saved for later."
+    notification: "&7Your auction for &f{0} &7expired and was returned."
+    inventory-full: "&cYour auction for &f{0} &cexpired, but your inventory was full. Item saved for later."
 
   # Auction Info
   info:
@@ -109,68 +109,212 @@ auction:
 # GUI Messages
 gui:
   main-menu:
-    title: "⚑ Auction House"
-    browse-all: "&eView All Auctions"
-    your-listings: "&aYour Listings ({0})"
-    past-items: "&6Past Items"
-    create-auction: "&bCreate Auction"
-
+    title: "&6◆ &e&lAuction House"
+    browse-all:
+      name: "&6◆ &e&lBrowse Auctions"
+      lore:
+        - "&7See every listing quickly."
+        - "&7Active auctions: &f{0}"
+        - ""
+        - "&eClick to browse."
+    your-listings:
+      name: "&6◆ &e&lYour Listings"
+      lore:
+        - "&7Manage each active posting."
+        - "&7Listings: &f{0}"
+        - ""
+        - "&eClick to manage."
+      expiring: "&7Expiring soon: &f{0}"
+    past-items:
+      name: "&6◆ &e&lPast Items"
+      lore:
+        - "&7Review sold and expired items."
+        - "&7Sold: &f{0} &7| Expired: &f{1}"
+        - ""
+        - "&eClick to review."
+      pending: "&7Items to claim: &f{0}"
+    create-auction:
+      name: "&6◆ &e&lCreate Auction"
+      lore:
+        - "&7Turn the held item into a sale."
+        - "&7Hold the item before opening."
+        - ""
+        - "&eClick to start."
   my-listings:
-    title: "Your Active Listings"
-    click-to-cancel: "&cClick to cancel auction"
-
+    title: "&6◆ &e&lYour Active Listings"
+    click-to-cancel: "&eClick to cancel this listing."
+    expiring-warning: "&c❌ &fExpiring soon!"
   past-items:
-    title: "Your Auction History"
-    filter-all: "&7Show All"
-    filter-sold: "&aShow Sold Items"
-    filter-expired: "&cShow Expired Items"
-    click-to-claim: "&e&lClick to claim item back!"
-    claimed: "&a&l✓ &aItem returned to inventory!"
-    inventory-full: "&cYour inventory is full! Make some space and try again."
-
+    title: "&6◆ &e&lYour Auction History"
+    filter-all: "&6◆ &e&lAll Items"
+    filter-all-lore:
+      - "&7Show sold and expired."
+      - ""
+      - "&eClick to filter."
+    filter-sold: "&6◆ &e&lSold Items"
+    filter-sold-lore:
+      - "&7Only show successful sales."
+      - ""
+      - "&eClick to filter."
+    filter-expired: "&6◆ &e&lExpired Items"
+    filter-expired-lore:
+      - "&7Display unclaimed returns."
+      - ""
+      - "&eClick to filter."
+    filter-active: "&7Currently selected."
+    click-to-claim: "&eClick to reclaim this item."
+    claimed: "&aItem returned to your inventory!"
+    inventory-full: "&cYour inventory is full; clear space first."
+    sold-lore:
+      - "&7Status: &fSold"
+      - "&7Price: &f${0}"
+      - "&7Seller: &f{1}"
+      - "&7Date: &f{2}"
+    expired-lore:
+      - "&7Status: &fExpired"
+      - ""
+      - "&eReady to claim."
   auction-house:
-    title: "⚑ Auction House"
-    your-auctions: "Your Auctions"
-    buy-now: "&a&lBUY NOW"
-    price: "&6Price: ${0}"
-    seller: "&7Seller: {0}"
-    time-left: "&eTime left: {0}"
-    click-to-buy: "&7Click to purchase!"
-    click-to-cancel: "&cClick to cancel"
-    no-auctions: "&7No active auctions"
-    next-page: "&aNext Page →"
-    previous-page: "&cPrevious Page ←"
-    refresh: "&eRefresh Listings"
-    close: "&cClose"
+    title: "&6◆ &e&lAuction House"
+    filtered-suffix: " &7- &f{0}"
+    your-auctions: "&6◆ &e&lYour Auctions"
+    buy-now: "&6◆ &e&lBuy Now"
+    price: "&7Price: &f${0}"
+    seller: "&7Seller: &f{0}"
+    time-left: "&7Time left: &f{0}"
+    click-to-buy: "&eClick to purchase."
+    click-to-cancel: "&eClick to cancel."
+    no-auctions: "&7No active auctions."
+    next-page: "&6◆ &e&lNext Page"
+    next-page-lore:
+      - "&7Advance to the next page."
+      - ""
+      - "&eClick to continue."
+    previous-page: "&6◆ &e&lPrevious Page"
+    previous-page-lore:
+      - "&7Return to the previous page."
+      - ""
+      - "&eClick to go back."
+    refresh: "&6◆ &e&lRefresh Listings"
+    refresh-lore:
+      - "&7Reload current offers."
+      - ""
+      - "&eClick to refresh."
+    close: "&6◆ &e&lClose Menu"
+    close-lore:
+      - "&7Return to the previous view."
+      - ""
+      - "&eClick to close."
+  controls:
+    back: "&6◆ &e&lBack to Menu"
+    back-lore:
+      - "&7Return to the main hub."
+      - ""
+      - "&eClick to go back."
+    page-info-lore:
+      - "&7Track page progress."
+      - ""
+      - "&eKeep browsing."
   confirmation:
-    title: "&8Confirm Purchase"
-    confirm: "&a&lCONFIRM"
-    cancel: "&c&lCANCEL"
-  history:
-    title: "Purchase History: {0}"
+    title: "&6◆ &e&lConfirm Purchase"
+    confirm: "&6◆ &e&lConfirm"
+    confirm-lore:
+      - "&7Accept the purchase."
+      - ""
+      - "&eClick to confirm."
+    cancel: "&6◆ &e&lCancel"
+    cancel-lore:
+      - "&7Return without changes."
+      - ""
+      - "&eClick to cancel."
   cancel-confirmation:
-    title: "&8Cancel Auction?"
-    confirm: "&c&lCANCEL AUCTION"
-    back: "&a&lGO BACK"
+    title: "&6◆ &e&lCancel Auction"
+    confirm: "&6◆ &e&lCancel Auction"
+    confirm-lore:
+      - "&7Remove this listing."
+      - ""
+      - "&eClick to cancel."
+    back: "&6◆ &e&lGo Back"
+    back-lore:
+      - "&7Return to auction view."
+      - ""
+      - "&eClick to return."
+  history:
+    title: "&6◆ &e&lHistory: {0}"
+    item-lore:
+      - "&7Price: &f${0}"
+      - "&7Seller: &f{1}"
+      - "&7Date: &f{2}"
+      - ""
+      - "&eBrowse records."
+  create-auction:
+    title: "&6◆ &e&lCreate Auction"
+    display:
+      amount: "&7Amount: &f{0}"
+    price:
+      name: "&6◆ &e&lSet Price"
+      lore-unset:
+        - "&7Choose a listing price."
+        - "&7Awaiting input."
+        - ""
+        - "&eClick to enter price."
+      lore-set:
+        - "&7Adjust the listing price."
+        - "&7Current price: &f${0}"
+        - ""
+        - "&eClick to edit price."
+    duration:
+      name: "&6◆ &e&lSelect Duration"
+      lore:
+        - "&7Current: &f{0}"
+        - "&7Base fee: &f${1}"
+        - "&7Percent fee: &f{2}%"
+        - ""
+        - "&eClick to rotate."
+    confirm:
+      name: "&6◆ &e&lCreate Auction"
+      lore-disabled:
+        - "&7Set a valid price first."
+        - ""
+        - "&eSet price to continue."
+      lore-ready:
+        - "&7Review fees and confirm."
+        - "&7Creation fee: &f${0}"
+        - ""
+        - "&eClick to confirm."
+    cancel:
+      name: "&6◆ &e&lCancel Setup"
+      lore:
+        - "&7Stop and return item."
+        - ""
+        - "&eClick to cancel."
+    fee-info:
+      name: "&6◆ &e&lFee Breakdown"
+      lore:
+        - "&7Base fee: &f${0}"
+        - "&7Percentage fee: &f${1} &7({2}%)"
+        - "&7Total fee: &f${3}"
+        - ""
+        - "&eFee summary."
 
 # Economy Messages
 economy:
-  not-available: "&cEconomy system is not available! Please contact an administrator."
-  transaction-failed: "&cTransaction failed! Please try again."
+  not-available: "&cThe economy system is unavailable."
+  transaction-failed: "&cTransaction failed. Try again."
 
 # Auction Sold Messages
 auction-sold:
-  notification: "&a&l✓ &aYour auction for &f{0} &awas sold for &6${1}&a!"
-  summary: "&a&l✓ &aWhile you were offline, &e{0} &aitems were sold for &6${1}&a! &7(Hover for details)"
-  summary-hover: "&7Sold Items:\n{0}"
-  summary-item-format: "&7- &f{0} &7for &6${1}"
+  notification: "&aYour auction for &f{0} &asold for &f${1}&a."
+  summary: "&aWhile you were away, &f{0} &aitems sold for &f${1}&a. &7(Hover for details)"
+  summary-hover: "&7Sold items:\n{0}"
+  summary-item-format: "&7- &f{0} &7for &f${1}"
 
 # Notification Messages
 notifications:
-  sale-action-bar: "&a✓ Your {0} sold for ${1}!"
-  expiry-action-bar: "&c✗ Auction for {0} expired"
-  join-summary: "&6While you were away: &a{0} item(s) sold &7| &c{1} auction(s) expired"
-  expired-summary: "&c✗ {0} auction(s) expired"
+  sale-action-bar: "&aSold {0} for ${1}."
+  expiry-action-bar: "&cAuction for {0} expired."
+  join-summary: "&7While you were away: &a{0} sold &7| &c{1} expired"
+  expired-summary: "&c{0} auction(s) expired."
 
 # Time Formats
 time:
@@ -182,39 +326,39 @@ time:
 
 # Admin Messages
 admin:
-  reload: "&aPlugin reloaded successfully!"
-  clear-auctions: "&aCleared &e{0} &aauctions!"
-  auction-removed: "&aRemoved auction ID &e{0}&a!"
-  player-auctions-cleared: "&aCleared all auctions from &e{0}&a!"
-  database-status: "&7Database Status: {0}"
+  reload: "&aPlugin reloaded."
+  clear-auctions: "&aCleared &f{0} &aauctions."
+  auction-removed: "&aRemoved auction ID &f{0}&a."
+  player-auctions-cleared: "&aCleared all auctions from &f{0}&a."
+  database-status: "&7Database status: {0}"
   database-connected: "&aConnected"
   database-disconnected: "&cDisconnected"
-  clear-unimplemented: "&eThe clear feature isn't implemented yet."
+  clear-unimplemented: "&7The clear feature isn't implemented yet."
 
 migration:
-  sqlite-only: "&cMigration is only available when using a SQLite database."
-  lockdown-enabled: "&eLockdown mode enabled for migration."
+  sqlite-only: "&cMigration is only available when using SQLite."
+  lockdown-enabled: "&7Lockdown mode enabled for migration."
   stats:
-    header: "&6Migration Stats:"
-    auctions: "&7- Auctions: &e{0}"
-    transactions: "&7- Transactions: &e{0}"
+    header: "&7Migration stats:"
+    auctions: "&7- Auctions: &f{0}"
+    transactions: "&7- Transactions: &f{0}"
     error: "&cError getting stats: &f{0}"
   postgres:
     verified: "&aPostgreSQL connection verified."
-    failed: "&cPostgreSQL connection failed!"
+    failed: "&cPostgreSQL connection failed."
     error: "&cPostgreSQL connection error: &f{0}"
   confirm:
     prefix: "&eType "
     command: "&6/auction migrate confirm"
     suffix: "&e to start the migration."
-    warning: "&cThis will overwrite data in the target database!"
-  starting: "&aStarting migration..."
+    warning: "&cThis will overwrite data in the target database."
+  starting: "&7Starting migration..."
   progress:
-    auctions: "&7Migrated &e{0} &7auctions..."
-    transactions: "&7Migrated &e{0} &7transactions..."
-  auctions-complete: "&aAuctions migration completed (&e{0}&a records)."
-  transactions-complete: "&aTransactions migration completed (&e{0}&a records)."
-  success: "&aMigration successfully completed! Update config.yml to use PostgreSQL and restart."
+    auctions: "&7Migrated &f{0} &7auctions..."
+    transactions: "&7Migrated &f{0} &7transactions..."
+  auctions-complete: "&aAuction migration complete (&f{0}&a records)."
+  transactions-complete: "&aTransaction migration complete (&f{0}&a records)."
+  success: "&aMigration completed. Update config.yml to use PostgreSQL and restart."
   failed: "&cMigration failed: &f{0}"
 
 # Help Messages

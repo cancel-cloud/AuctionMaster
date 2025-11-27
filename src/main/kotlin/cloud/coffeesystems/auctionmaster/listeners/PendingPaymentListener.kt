@@ -90,8 +90,7 @@ class PendingPaymentListener(private val plugin: AuctionMaster) : Listener {
                                     totalAmount
                                 ).hoverEvent(HoverEvent.showText(hoverContent))
 
-                                val prefix = plugin.messageManager.get("prefix")
-                                player.sendMessage(prefix.append(Component.text(" ")).append(summaryMsg))
+                                plugin.messageManager.sendComponent(player, summaryMsg)
 
                             } else {
                                 // Individual messages
