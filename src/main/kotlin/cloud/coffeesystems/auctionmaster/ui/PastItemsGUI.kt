@@ -327,17 +327,28 @@ class PastItemsGUI(private val plugin: AuctionMaster) : Listener {
                 return
             }
 
-            // Give item to player
+            // Give item to player first (before async DB call to prevent duplication)
             player.inventory.addItem(pastItem.item)
 
-            // Remove from pending
-            plugin.auctionManager.claimExpiredItem(pastItem.pendingId)
+            // Capture values for async
+            val pendingId = pastItem.pendingId
+            val currentPageCopy = currentPage
+            val currentFilterCopy = currentFilter
 
-            // Send success message
-            plugin.messageManager.send(player, "gui.past-items.claimed")
+            // Remove from pending async
+            plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                plugin.auctionManager.claimExpiredItem(pendingId)
 
-            // Refresh GUI
-            open(player, currentPage, currentFilter)
+                // Refresh GUI on main thread
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    if (player.isOnline && openGUIs[player] == this) {
+                        // Send success message
+                        plugin.messageManager.send(player, "gui.past-items.claimed")
+                        // Refresh GUI
+                        open(player, currentPageCopy, currentFilterCopy)
+                    }
+                })
+            })
         }
     }
 

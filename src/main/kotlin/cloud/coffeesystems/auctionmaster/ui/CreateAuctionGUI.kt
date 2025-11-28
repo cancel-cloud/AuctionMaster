@@ -261,7 +261,7 @@ class CreateAuctionGUI(
             return
         }
 
-        // Check price limits
+        // Check price limits (these are config values, not DB calls)
         val minPrice = plugin.config.getDouble("auction.min-price", 1.0)
         val maxPrice = plugin.config.getDouble("auction.max-price", 1000000.0)
 
@@ -275,16 +275,9 @@ class CreateAuctionGUI(
             return
         }
 
-        // Check max auctions
         val maxAuctions = plugin.config.getInt("auction.max-auctions-per-player", 5)
-        val currentAuctions = plugin.auctionManager.getActiveAuctionCount(player.uniqueId)
 
-        if (currentAuctions >= maxAuctions) {
-            plugin.messageManager.send(player, "auction.create.max-reached", maxAuctions)
-            return
-        }
-
-        // Calculate and check fee
+        // Calculate fee (config values, not DB)
         val fee = selectedDuration.calculateFee(plugin, price!!)
         if (fee > 0) {
             if (!plugin.economyHook.isAvailable()) {
@@ -305,72 +298,100 @@ class CreateAuctionGUI(
                 return
             }
 
-            // Charge the fee
+            // Charge the fee first
             if (!plugin.economyHook.withdraw(player, fee)) {
                 plugin.messageManager.send(player, "economy.transaction-failed")
                 return
             }
         }
 
-        // Create the auction
-        val auctionId =
-                plugin.auctionManager.createAuction(
-                        player.uniqueId,
-                        player.name,
-                        item,
-                        price!!,
-                        selectedDuration.durationMillis
-                )
+        // Capture values for async use
+        val finalPrice = price!!
+        val itemCopy = item.clone()
+        val duration = selectedDuration
 
-        if (auctionId != null) {
-            plugin.messageManager.send(player, "auction.create.success")
+        // Run DB operations async
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            // Check max auctions (DB call - now async)
+            val currentAuctions = plugin.auctionManager.getActiveAuctionCount(player.uniqueId)
 
-            val itemName =
-                    if (item.itemMeta.hasDisplayName()) {
-                        item.itemMeta.displayName() ?: Component.text("Unknown")
-                    } else {
-                        Component.text(
-                                item.type
-                                        .name
-                                        .replace("_", " ")
-                                        .lowercase()
-                                        .split(" ")
-                                        .joinToString(" ") { it.replaceFirstChar(Char::uppercase) }
+            if (currentAuctions >= maxAuctions) {
+                // Back to main thread to refund and notify
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    if (!player.isOnline) return@Runnable
+                    // Refund fee if charged
+                    if (fee > 0) {
+                        plugin.economyHook.deposit(player, fee)
+                    }
+                    plugin.messageManager.send(player, "auction.create.max-reached", maxAuctions)
+                })
+                return@Runnable
+            }
+
+            // Create the auction (DB call - now async)
+            val auctionId = plugin.auctionManager.createAuction(
+                    player.uniqueId,
+                    player.name,
+                    itemCopy,
+                    finalPrice,
+                    duration.durationMillis
+            )
+
+            // Back to main thread for player notifications
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                if (!player.isOnline) return@Runnable
+
+                if (auctionId != null) {
+                    plugin.messageManager.send(player, "auction.create.success")
+
+                    val itemName =
+                            if (itemCopy.itemMeta.hasDisplayName()) {
+                                itemCopy.itemMeta.displayName() ?: Component.text("Unknown")
+                            } else {
+                                Component.text(
+                                        itemCopy.type
+                                                .name
+                                                .replace("_", " ")
+                                                .lowercase()
+                                                .split(" ")
+                                                .joinToString(" ") { it.replaceFirstChar(Char::uppercase) }
+                                )
+                            }
+
+                    plugin.messageManager.sendRaw(
+                            player,
+                            "auction.create.details",
+                            itemName,
+                            finalPrice,
+                            duration.displayName
+                    )
+
+                    if (fee > 0) {
+                        plugin.messageManager.send(
+                                player,
+                                "auction.create.fee-charged",
+                                "%.2f".format(fee)
                         )
                     }
 
-            plugin.messageManager.sendRaw(
-                    player,
-                    "auction.create.details",
-                    itemName,
-                    price!!,
-                    selectedDuration.displayName
-            )
+                    plugin.notificationSettings.playSoundIfEnabled(
+                            player,
+                            NotificationSoundType.AUCTION_CREATE,
+                            Sound.BLOCK_NOTE_BLOCK_PLING,
+                            0.8f,
+                            1.0f
+                    )
 
-            if (fee > 0) {
-                plugin.messageManager.send(
-                        player,
-                        "auction.create.fee-charged",
-                        "%.2f".format(fee)
-                )
-            }
-
-            plugin.notificationSettings.playSoundIfEnabled(
-                    player,
-                    NotificationSoundType.AUCTION_CREATE,
-                    Sound.BLOCK_NOTE_BLOCK_PLING,
-                    0.8f,
-                    1.0f
-            )
-
-            player.closeInventory()
-        } else {
-            // Refund fee if auction creation failed
-            if (fee > 0) {
-                plugin.economyHook.deposit(player, fee)
-            }
-            plugin.messageManager.send(player, "auction.create.failed-refund")
-        }
+                    player.closeInventory()
+                } else {
+                    // Refund fee if auction creation failed
+                    if (fee > 0) {
+                        plugin.economyHook.deposit(player, fee)
+                    }
+                    plugin.messageManager.send(player, "auction.create.failed-refund")
+                }
+            })
+        })
     }
 
     private fun handleCancelClick(player: Player) {

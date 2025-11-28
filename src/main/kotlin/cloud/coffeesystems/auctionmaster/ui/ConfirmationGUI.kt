@@ -239,10 +239,6 @@ class ConfirmationGUI(
             return
         }
 
-        // Determine if seller is online (for payment handling)
-        val seller = Bukkit.getPlayer(auction.sellerUuid)
-        val sellerOnline = seller != null
-
         // Run DB operations async to avoid blocking main thread
         plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
             // Use atomic completePurchase - this verifies auction is still active,
@@ -270,9 +266,10 @@ class ConfirmationGUI(
                 // Give item to buyer
                 player.inventory.addItem(completedAuction.item)
 
-                // Handle seller payment
-                if (sellerOnline && seller != null && seller.isOnline) {
-                    // Seller is still online - pay immediately
+                // Handle seller payment - re-check if seller is online now
+                val seller = Bukkit.getPlayer(completedAuction.sellerUuid)
+                if (seller?.isOnline == true) {
+                    // Seller is online - pay immediately
                     plugin.economyHook.deposit(seller, completedAuction.price)
                     plugin.messageManager.send(
                             seller,
