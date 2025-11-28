@@ -19,7 +19,6 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.jetbrains.exposed.sql.insert
 
 class ConfirmationGUI(
         private val plugin: AuctionMaster,
@@ -208,15 +207,7 @@ class ConfirmationGUI(
     }
 
     private fun handleConfirm(player: Player) {
-        // Re-check auction status
-        val currentAuction = plugin.auctionManager.getAuctionById(auction.id)
-        if (currentAuction == null || currentAuction.status != AuctionStatus.ACTIVE) {
-            plugin.messageManager.send(player, "auction.buy.not-found")
-            player.closeInventory()
-            return
-        }
-
-        // Check economy
+        // Check economy first (before any DB calls)
         if (!plugin.economyHook.isAvailable()) {
             plugin.messageManager.send(player, "economy.not-available")
             player.closeInventory()
@@ -241,110 +232,113 @@ class ConfirmationGUI(
             return
         }
 
-        // Process transaction
-        if (plugin.economyHook.withdraw(player, auction.price)) {
-            // Give item
-            player.inventory.addItem(auction.item)
+        // Withdraw money first
+        if (!plugin.economyHook.withdraw(player, auction.price)) {
+            plugin.messageManager.send(player, "economy.transaction-failed")
+            player.closeInventory()
+            return
+        }
 
-            // Update status
-            plugin.auctionManager.updateAuctionStatus(auction.id, AuctionStatus.SOLD)
+        // Run DB operations async to avoid blocking main thread
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            // Use atomic completePurchase - this verifies auction is still active,
+            // updates status, and records transaction all in one transaction
+            val completedAuction = plugin.auctionManager.completePurchase(
+                    auction.id,
+                    player.uniqueId,
+                    player.name,
+                    createPendingPayment = false // We'll handle pending payment separately
+            )
 
-            // Record transaction
-            plugin.auctionManager.recordTransaction(auction, player.uniqueId, player.name)
+            // Back to main thread for player interactions
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                if (!player.isOnline) return@Runnable
 
-            // Pay seller
-            val seller = Bukkit.getPlayer(auction.sellerUuid)
-            if (seller != null) {
-                // Seller is online - pay immediately
-                plugin.economyHook.deposit(seller, auction.price)
-                plugin.messageManager.send(
-                        seller,
-                        "auction-sold.notification",
-                        auction.item.type.name,
-                        auction.price
-                )
-
-                // Send action bar notification if enabled
-                if (plugin.config.getBoolean("notifications.sale-notification", true)) {
-                    val itemName =
-                            if (auction.item.itemMeta?.hasDisplayName() == true) {
-                                auction.item.itemMeta?.displayName()
-                                        ?: Component.text(auction.item.type.name)
-                            } else {
-                                Component.text(auction.item.type.name)
-                            }
-                    seller.sendActionBar(
-                            Component.text("✓ Your ", NamedTextColor.GREEN)
-                                    .append(itemName)
-                                    .append(
-                                            Component.text(
-                                                    " sold for $${auction.price}!",
-                                                    NamedTextColor.GOLD
-                                            )
-                                    )
-                    )
+                if (completedAuction == null) {
+                    // Purchase failed (auction no longer available)
+                    // Refund the player
+                    plugin.economyHook.deposit(player, auction.price)
+                    plugin.messageManager.send(player, "auction.buy.not-found")
+                    player.closeInventory()
+                    return@Runnable
                 }
 
+                // Give item to buyer
+                player.inventory.addItem(completedAuction.item)
+
+                // Handle seller payment - re-check if seller is online now
+                val seller = Bukkit.getPlayer(completedAuction.sellerUuid)
+                if (seller?.isOnline == true) {
+                    // Seller is online - pay immediately
+                    plugin.economyHook.deposit(seller, completedAuction.price)
+                    plugin.messageManager.send(
+                            seller,
+                            "auction-sold.notification",
+                            completedAuction.item.type.name,
+                            completedAuction.price
+                    )
+
+                    // Send action bar notification if enabled
+                    if (plugin.config.getBoolean("notifications.sale-notification", true)) {
+                        val itemName =
+                                if (completedAuction.item.itemMeta?.hasDisplayName() == true) {
+                                    completedAuction.item.itemMeta?.displayName()
+                                            ?: Component.text(completedAuction.item.type.name)
+                                } else {
+                                    Component.text(completedAuction.item.type.name)
+                                }
+                        seller.sendActionBar(
+                                Component.text("✓ Your ", NamedTextColor.GREEN)
+                                        .append(itemName)
+                                        .append(
+                                                Component.text(
+                                                        " sold for $${completedAuction.price}!",
+                                                        NamedTextColor.GOLD
+                                                )
+                                        )
+                        )
+                    }
+
+                    plugin.notificationSettings.playSoundIfEnabled(
+                            seller,
+                            NotificationSoundType.AUCTION_SELL,
+                            Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                            0.85f,
+                            1.0f
+                    )
+                } else {
+                    // Seller is offline - handle payment async
+                    plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                        val offlineSeller = Bukkit.getOfflinePlayer(completedAuction.sellerUuid)
+                        val depositSuccess = plugin.economyHook.depositOffline(offlineSeller, completedAuction.price)
+
+                        // Create pending payment notification
+                        plugin.auctionManager.createPendingPaymentNotification(
+                                completedAuction.sellerUuid,
+                                completedAuction.sellerName,
+                                completedAuction.item.type.name,
+                                completedAuction.price,
+                                alreadyPaid = depositSuccess
+                        )
+                    })
+                }
+
+                plugin.messageManager.send(
+                        player,
+                        "auction.buy.success",
+                        completedAuction.item.type.name,
+                        completedAuction.price
+                )
                 plugin.notificationSettings.playSoundIfEnabled(
-                        seller,
-                        NotificationSoundType.AUCTION_SELL,
-                        Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                        player,
+                        NotificationSoundType.AUCTION_BUY,
+                        Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
                         0.85f,
                         1.0f
                 )
-            } else {
-                // Seller is offline - store pending payment
-                val offlineSeller = Bukkit.getOfflinePlayer(auction.sellerUuid)
-
-                // Try to deposit to offline player
-                if (plugin.economyHook.depositOffline(offlineSeller, auction.price)) {
-                    // Payment successful, store notification for when they login
-                    org.jetbrains.exposed.sql.transactions.transaction(
-                            plugin.databaseManager.getDatabase()
-                    ) {
-                        cloud.coffeesystems.auctionmaster.database.PendingPayments.insert {
-                            it[sellerUuid] = auction.sellerUuid.toString()
-                            it[sellerName] = auction.sellerName
-                            it[itemName] = auction.item.type.name
-                            it[amount] = auction.price
-                            it[timestamp] = System.currentTimeMillis()
-                            it[paid] = true
-                        }
-                    }
-                } else {
-                    // Economy doesn't support offline deposits, store for later
-                    org.jetbrains.exposed.sql.transactions.transaction(
-                            plugin.databaseManager.getDatabase()
-                    ) {
-                        cloud.coffeesystems.auctionmaster.database.PendingPayments.insert {
-                            it[sellerUuid] = auction.sellerUuid.toString()
-                            it[sellerName] = auction.sellerName
-                            it[itemName] = auction.item.type.name
-                            it[amount] = auction.price
-                            it[timestamp] = System.currentTimeMillis()
-                            it[paid] = false
-                        }
-                    }
-                }
-            }
-
-            plugin.messageManager.send(
-                    player,
-                    "auction.buy.success",
-                    auction.item.type.name,
-                    auction.price
-            )
-            plugin.notificationSettings.playSoundIfEnabled(
-                    player,
-                    NotificationSoundType.AUCTION_BUY,
-                    Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
-                    0.85f,
-                    1.0f
-            )
-            player.closeInventory()
-        } else {
-            plugin.messageManager.send(player, "economy.transaction-failed")
-        }
+                player.closeInventory()
+            })
+        })
     }
 
     private fun handleCancelAuction(player: Player) {
@@ -355,16 +349,26 @@ class ConfirmationGUI(
             return
         }
 
-        // Return item to player
-        player.inventory.addItem(auction.item)
+        // Run DB update async
+        plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+            // Update auction status in DB
+            val success = plugin.auctionManager.updateAuctionStatus(auction.id, AuctionStatus.CANCELLED)
 
-        // Update auction status
-        plugin.auctionManager.updateAuctionStatus(auction.id, AuctionStatus.CANCELLED)
+            // Back to main thread for player interaction
+            plugin.server.scheduler.runTask(plugin, Runnable {
+                if (!player.isOnline) return@Runnable
 
-        // Send success message
-        plugin.messageManager.send(player, "auction.cancel.success")
+                if (success) {
+                    // Return item to player
+                    player.inventory.addItem(auction.item)
+                    plugin.messageManager.send(player, "auction.cancel.success")
+                } else {
+                    plugin.messageManager.send(player, "auction.cancel.failed")
+                }
 
-        player.closeInventory()
+                player.closeInventory()
+            })
+        })
     }
 
     private fun handleCancel(player: Player) {
