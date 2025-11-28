@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
@@ -322,6 +323,9 @@ class CreateAuctionGUI(
 
         if (auctionId != null) {
             plugin.messageManager.send(player, "auction.create.success")
+            
+            // Play confirmation sound for auction creation
+            player.playSound(player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f)
 
             val itemName =
                     if (item.itemMeta.hasDisplayName()) {

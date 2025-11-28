@@ -2,6 +2,7 @@ package cloud.coffeesystems.auctionmaster.listeners
 
 import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.database.PendingPayments
+import org.bukkit.Sound
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -71,6 +72,9 @@ class PendingPaymentListener(private val plugin: AuctionMaster) : Listener {
                             }
 
                             if (processedPayments.isEmpty()) return@Runnable
+                            
+                            // Play notification sound for earnings received
+                            player.playSound(player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f)
 
                             // Send notifications
                             if (processedPayments.size > 3) {

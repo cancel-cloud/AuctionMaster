@@ -9,6 +9,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
@@ -249,6 +250,9 @@ class ConfirmationGUI(
 
             // Record transaction
             plugin.auctionManager.recordTransaction(auction, player.uniqueId, player.name)
+            
+            // Play positive confirmation sound for buyer
+            player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.2f)
 
             // Pay seller
             val seller = Bukkit.getPlayer(auction.sellerUuid)
@@ -261,6 +265,9 @@ class ConfirmationGUI(
                         auction.item.type.name,
                         auction.price
                 )
+                
+                // Play notification sound for seller
+                seller.playSound(seller.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f)
 
                 // Send action bar notification if enabled
                 if (plugin.config.getBoolean("notifications.sale-notification", true)) {

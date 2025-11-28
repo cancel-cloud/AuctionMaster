@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
@@ -62,6 +63,9 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
         plugin.server.pluginManager.registerEvents(this, plugin)
 
         player.openInventory(inventory)
+        
+        // Play subtle UI open sound (optional - not spammy)
+        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
     }
 
     private fun createBrowseAllItem(player: Player): ItemStack {
