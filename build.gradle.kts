@@ -34,9 +34,9 @@ repositories {
 // ============================================================================
 configurations.all {
     resolutionStrategy {
-        force("org.jetbrains.exposed:exposed-core:0.57.0")
-        force("org.jetbrains.exposed:exposed-dao:0.57.0")
-        force("org.jetbrains.exposed:exposed-jdbc:0.57.0")
+        force("org.jetbrains.exposed:exposed-core:0.61.0")
+        force("org.jetbrains.exposed:exposed-dao:0.61.0")
+        force("org.jetbrains.exposed:exposed-jdbc:0.61.0")
     }
 }
 
@@ -54,10 +54,10 @@ dependencies {
     //Vault API
     compileOnly ("com.github.MilkBowl", "VaultAPI", "1.7.1")
 
-    // Database - Exposed Framework (using 0.57.0 to avoid beta package changes)
-    implementation("org.jetbrains.exposed:exposed-core:0.57.0")
-    implementation("org.jetbrains.exposed:exposed-dao:0.57.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.57.0")
+    // Database - Exposed Framework (using 0.61.0 to avoid beta package changes)
+    implementation("org.jetbrains.exposed:exposed-core:0.61.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.61.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.61.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.xerial:sqlite-jdbc:3.42.0.0")
     implementation("org.postgresql:postgresql:42.7.3")
