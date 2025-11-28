@@ -4,6 +4,8 @@ import cloud.coffeesystems.auctionmaster.model.Auction
 import cloud.coffeesystems.auctionmaster.model.AuctionHistoryItem
 import cloud.coffeesystems.auctionmaster.model.AuctionStatus
 import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.bukkit.inventory.ItemStack
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -12,6 +14,93 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 /** Manages auction data operations using Exposed framework */
 class AuctionManager(private val databaseManager: DatabaseManager) {
+
+    /**
+     * Execute a database operation on the IO dispatcher.
+     * This ensures DB operations don't block the main thread.
+     */
+    private suspend fun <T> dbAsync(block: () -> T): T = withContext(Dispatchers.IO) {
+        block()
+    }
+
+    // ========================================================================
+    // Async versions of methods for use from coroutines
+    // ========================================================================
+
+    /** Create a new auction asynchronously */
+    suspend fun createAuctionAsync(
+            sellerUuid: UUID,
+            sellerName: String,
+            item: ItemStack,
+            price: Double,
+            duration: Long
+    ): Int? = dbAsync {
+        createAuction(sellerUuid, sellerName, item, price, duration)
+    }
+
+    /** Get all active auctions asynchronously */
+    suspend fun getActiveAuctionsAsync(): List<Auction> = dbAsync {
+        getActiveAuctions()
+    }
+
+    /** Get auctions by seller asynchronously */
+    suspend fun getAuctionsBySellerAsync(sellerUuid: UUID): List<Auction> = dbAsync {
+        getAuctionsBySeller(sellerUuid)
+    }
+
+    /** Get auction by ID asynchronously */
+    suspend fun getAuctionByIdAsync(id: Int): Auction? = dbAsync {
+        getAuctionById(id)
+    }
+
+    /** Update auction status asynchronously */
+    suspend fun updateAuctionStatusAsync(id: Int, status: AuctionStatus): Boolean = dbAsync {
+        updateAuctionStatus(id, status)
+    }
+
+    /** Get active auction count asynchronously */
+    suspend fun getActiveAuctionCountAsync(sellerUuid: UUID): Int = dbAsync {
+        getActiveAuctionCount(sellerUuid)
+    }
+
+    /** Get history asynchronously */
+    suspend fun getHistoryAsync(playerUuid: UUID): List<AuctionHistoryItem> = dbAsync {
+        getHistory(playerUuid)
+    }
+
+    /** Get pending expired items asynchronously */
+    suspend fun getPendingExpiredItemsAsync(playerUuid: UUID): List<Pair<Int, ItemStack>> = dbAsync {
+        getPendingExpiredItems(playerUuid)
+    }
+
+    /** Get expired auctions for seller asynchronously */
+    suspend fun getExpiredAuctionsForSellerAsync(sellerUuid: UUID): List<Auction> = dbAsync {
+        getExpiredAuctionsForSeller(sellerUuid)
+    }
+
+    /** Move to expired asynchronously */
+    suspend fun moveToExpiredAsync(auctionId: Int, sellerUuid: UUID, sellerName: String): Boolean = dbAsync {
+        moveToExpired(auctionId, sellerUuid, sellerName)
+    }
+
+    /** Get unique sellers asynchronously */
+    suspend fun getUniqueSellersAsync(): List<String> = dbAsync {
+        getUniqueSellers()
+    }
+
+    /** Get auctions by seller name asynchronously */
+    suspend fun getAuctionsBySellerAsync(sellerName: String): List<Auction> = dbAsync {
+        getAuctionsBySeller(sellerName)
+    }
+
+    /** Get active auction count not expired asynchronously */
+    suspend fun getActiveAuctionCountNotExpiredAsync(sellerUuid: UUID): Int = dbAsync {
+        getActiveAuctionCountNotExpired(sellerUuid)
+    }
+
+    // ========================================================================
+    // Synchronous methods (for backward compatibility)
+    // ========================================================================
 
     /** Create a new auction */
     fun createAuction(
@@ -159,6 +248,126 @@ class AuctionManager(private val databaseManager: DatabaseManager) {
                 }
                 true
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    /**
+     * Complete an auction purchase atomically.
+     * This method verifies the auction is still active, updates its status to SOLD,
+     * records the transaction, and optionally creates a pending payment for the seller.
+     *
+     * @param auctionId The ID of the auction to purchase
+     * @param buyerUuid The UUID of the buyer
+     * @param buyerName The name of the buyer
+     * @param createPendingPayment Whether to create a pending payment record for the seller
+     * @return The auction if purchase was successful, null otherwise
+     */
+    fun completePurchase(
+            auctionId: Int,
+            buyerUuid: UUID,
+            buyerName: String,
+            createPendingPayment: Boolean = false
+    ): Auction? {
+        return try {
+            transaction(databaseManager.getDatabase()) {
+                // Re-fetch auction within transaction to ensure it's still active
+                val auctionRow = Auctions.selectAll()
+                        .where { Auctions.id eq auctionId }
+                        .forUpdate() // Lock the row for update
+                        .singleOrNull() ?: return@transaction null
+
+                val auction = parseAuction(auctionRow) ?: return@transaction null
+
+                // Verify auction is still active and not expired
+                if (auction.status != AuctionStatus.ACTIVE) {
+                    return@transaction null
+                }
+
+                if (auction.expiresAt <= System.currentTimeMillis()) {
+                    return@transaction null
+                }
+
+                // Update auction status to SOLD
+                Auctions.update({ Auctions.id eq auctionId }) {
+                    it[status] = AuctionStatus.SOLD.name
+                }
+
+                // Record in Transactions table
+                Transactions.insert {
+                    it[Transactions.auctionId] = auctionId
+                    it[Transactions.buyerUuid] = buyerUuid.toString()
+                    it[Transactions.buyerName] = buyerName
+                    it[Transactions.price] = auction.price
+                    it[timestamp] = System.currentTimeMillis()
+                }
+
+                // Record in AuctionHistory table
+                AuctionHistory.insert {
+                    it[AuctionHistory.buyerUuid] = buyerUuid.toString()
+                    it[AuctionHistory.buyerName] = buyerName
+                    it[sellerUuid] = auction.sellerUuid.toString()
+                    it[sellerName] = auction.sellerName
+                    it[itemData] = serializeItem(auction.item)
+                    it[price] = auction.price
+                    it[timestamp] = System.currentTimeMillis()
+                }
+
+                // Create pending payment if seller is offline
+                if (createPendingPayment) {
+                    PendingPayments.insert {
+                        it[sellerUuid] = auction.sellerUuid.toString()
+                        it[sellerName] = auction.sellerName
+                        it[itemName] = auction.item.type.name
+                        it[amount] = auction.price
+                        it[timestamp] = System.currentTimeMillis()
+                        it[paid] = false
+                    }
+                }
+
+                auction
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    /** Async version of completePurchase */
+    suspend fun completePurchaseAsync(
+            auctionId: Int,
+            buyerUuid: UUID,
+            buyerName: String,
+            createPendingPayment: Boolean = false
+    ): Auction? = dbAsync {
+        completePurchase(auctionId, buyerUuid, buyerName, createPendingPayment)
+    }
+
+    /**
+     * Create a pending payment record for offline payment processing.
+     * This is used when the economy deposit for an offline player succeeds.
+     */
+    fun createPendingPaymentNotification(
+            sellerUuid: UUID,
+            sellerName: String,
+            itemName: String,
+            amount: Double,
+            alreadyPaid: Boolean
+    ): Boolean {
+        return try {
+            transaction(databaseManager.getDatabase()) {
+                PendingPayments.insert {
+                    it[PendingPayments.sellerUuid] = sellerUuid.toString()
+                    it[PendingPayments.sellerName] = sellerName
+                    it[PendingPayments.itemName] = itemName
+                    it[PendingPayments.amount] = amount
+                    it[timestamp] = System.currentTimeMillis()
+                    it[paid] = alreadyPaid
+                }
+            }
+            true
         } catch (e: Exception) {
             e.printStackTrace()
             false

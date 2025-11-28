@@ -138,7 +138,14 @@ class NotificationSettingsGUI(private val plugin: AuctionMaster) : Listener {
         }
 
         private fun handleToggle(player: Player, type: NotificationSoundType) {
-                plugin.notificationSettings.toggle(player.uniqueId, type)
+                // Use async toggle for better performance, update UI optimistically
+                plugin.notificationSettings.toggleAsync(player.uniqueId, type) {
+                        // Callback when DB update completes - refresh UI if still open
+                        if (player.isOnline && openGUIs[player] == this) {
+                                updateInventory()
+                        }
+                }
+                // Update UI immediately (optimistic update)
                 updateInventory()
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.7f, 1.0f)
         }

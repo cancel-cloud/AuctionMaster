@@ -2,7 +2,6 @@ package cloud.coffeesystems.auctionmaster.listeners
 
 import cloud.coffeesystems.auctionmaster.AuctionMaster
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -24,15 +23,11 @@ class PlayerJoinExpiryListener(private val plugin: AuctionMaster) : Listener {
                 plugin,
                 Runnable {
                     try {
-                        // Get player's expired auctions
+                        // Get player's expired auctions (DB call - safe in async)
                         val expiredAuctions =
                                 plugin.auctionManager.getExpiredAuctionsForSeller(player.uniqueId)
 
-                        if (expiredAuctions.isEmpty()) {
-                            return@Runnable
-                        }
-
-                        // Move expired auctions to pending items
+                        // Move expired auctions to pending items (DB calls - safe in async)
                         for (auction in expiredAuctions) {
                             plugin.auctionManager.moveToExpired(
                                     auction.id,
@@ -44,28 +39,18 @@ class PlayerJoinExpiryListener(private val plugin: AuctionMaster) : Listener {
                             )
                         }
 
-                        // Count pending payments (items sold while offline)
-                        val pendingSales =
-                                plugin.server.scheduler
-                                        .callSyncMethod(plugin) {
-                                            // Access database synchronously
-                                            plugin.auctionManager.getPendingExpiredItems(
-                                                    player.uniqueId
-                                            )
-                                        }
-                                        .get()
-                                        .size
+                        // Get pending expired items count (DB call - safe in async)
+                        val pendingSales = plugin.auctionManager.getPendingExpiredItems(player.uniqueId).size
 
-                        // Send join summary (sync on main thread)
+                        // Send join summary (must be on main thread)
                         if (plugin.config.getBoolean("notifications.join-summary", true)) {
+                            val finalExpiredCount = expiredAuctions.size
                             plugin.server.scheduler.runTask(
                                     plugin,
                                     Runnable {
-                                        sendJoinSummary(
-                                                player,
-                                                pendingSales,
-                                                expiredAuctions.size
-                                        )
+                                        if (player.isOnline) {
+                                            sendJoinSummary(player, pendingSales, finalExpiredCount)
+                                        }
                                     }
                             )
                         }

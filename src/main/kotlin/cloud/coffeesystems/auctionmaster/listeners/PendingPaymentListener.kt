@@ -19,6 +19,9 @@ class PendingPaymentListener(private val plugin: AuctionMaster) : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
 
+        // Refresh notification settings cache for multi-server sync
+        plugin.notificationSettings.refreshSettingsAsync(player.uniqueId)
+
         // Check for pending payments asynchronously
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
