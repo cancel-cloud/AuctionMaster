@@ -104,6 +104,8 @@ class PendingPaymentListener(private val plugin: AuctionMaster) : Listener {
                                 }
                             }
 
+                            plugin.notificationSettings.playLoginPayoutSound(player)
+
                             // Remove from database (async)
                             plugin.server.scheduler.runTaskAsynchronously(
                                 plugin,

@@ -50,7 +50,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
     // Server API
-    compileOnly("org.purpurmc.purpur", "purpur-api", "1.21.1-R0.1-SNAPSHOT")
+    compileOnly("org.purpurmc.purpur", "purpur-api", "1.21.4-R0.1-SNAPSHOT")
     //Vault API
     compileOnly ("com.github.MilkBowl", "VaultAPI", "1.7.1")
 

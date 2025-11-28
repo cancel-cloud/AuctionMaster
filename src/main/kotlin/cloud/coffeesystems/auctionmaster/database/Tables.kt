@@ -66,3 +66,14 @@ object PendingExpiredItems : Table("pending_expired_items") {
 
     override val primaryKey = PrimaryKey(id)
 }
+
+/** Notification settings per player */
+object NotificationSettings : Table("auction_notification_settings") {
+    val playerUuid = varchar("player_uuid", 36)
+    val soundOnAuctionCreate = bool("sound_on_auction_create").default(true)
+    val soundOnAuctionBuy = bool("sound_on_auction_buy").default(true)
+    val soundOnAuctionSell = bool("sound_on_auction_sell").default(true)
+    val soundOnLoginPayout = bool("sound_on_login_payout").default(true)
+
+    override val primaryKey = PrimaryKey(playerUuid)
+}

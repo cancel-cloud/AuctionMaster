@@ -49,7 +49,8 @@ class DatabaseManager(private val plugin: Plugin) {
                         Transactions,
                         AuctionHistory,
                         PendingPayments,
-                        PendingExpiredItems
+                        PendingExpiredItems,
+                        NotificationSettings
                 )
             }
 
@@ -169,7 +170,8 @@ class DatabaseManager(private val plugin: Plugin) {
                         Transactions,
                         AuctionHistory,
                         PendingPayments,
-                        PendingExpiredItems
+                        PendingExpiredItems,
+                        NotificationSettings
                 )
             }
             plugin.logger.info("Database tables initialized successfully")

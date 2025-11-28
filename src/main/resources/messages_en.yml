@@ -140,6 +140,12 @@ gui:
         - "&7Hold the item before opening."
         - ""
         - "&eClick to start."
+    notification-settings:
+      name: "&6◆ &e&lNotification Settings"
+      lore:
+        - "&7Toggle your sound alerts."
+        - ""
+        - "&eClick to configure."
   my-listings:
     title: "&6◆ &e&lYour Active Listings"
     click-to-cancel: "&eClick to cancel this listing."
@@ -373,3 +379,37 @@ help:
   admin-header: "&6Admin Commands:"
   reload: "&6/auction reload &7- &fReload the plugin configuration"
   clear: "&6/auction clear [player] &7- &fClear auctions"
+  notification-settings:
+    title: "&6◆ &e&lNotification Settings"
+    state:
+      enabled: "&aEnabled"
+      disabled: "&cDisabled"
+    toggle:
+      create:
+        name: "&6◆ &e&lAuction Create Sound"
+        lore:
+          - "&7Plays when you create an auction."
+          - "&7Status: &f{0}"
+          - ""
+          - "&eClick to toggle."
+      buy:
+        name: "&6◆ &e&lAuction Buy Sound"
+        lore:
+          - "&7Plays when you buy an auction."
+          - "&7Status: &f{0}"
+          - ""
+          - "&eClick to toggle."
+      sell:
+        name: "&6◆ &e&lAuction Sell Sound"
+        lore:
+          - "&7Plays when your auction sells."
+          - "&7Status: &f{0}"
+          - ""
+          - "&eClick to toggle."
+      login:
+        name: "&6◆ &e&lLogin Payout Sound"
+        lore:
+          - "&7Plays when you collect offline payouts."
+          - "&7Status: &f{0}"
+          - ""
+          - "&eClick to toggle."

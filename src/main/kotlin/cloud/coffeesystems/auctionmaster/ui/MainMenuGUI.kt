@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
 
 /** Main menu GUI for the auction house */
 class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
@@ -23,6 +24,7 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
 
     private lateinit var inventory: Inventory
     private lateinit var viewer: Player
+    private var settingsSlot: Int = -1
 
     private fun msg(key: String, vararg args: Any?) =
             plugin.messageManager.get(key, *args).decoration(TextDecoration.ITALIC, false)
@@ -43,6 +45,8 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
         inventory.setItem(12, createYourListingsItem(player))
         inventory.setItem(14, createPastItemsItem(player))
         inventory.setItem(16, createCreateAuctionItem(player))
+        settingsSlot = inventory.size - 1
+        inventory.setItem(settingsSlot, createNotificationSettingsItem(player))
 
         // Fill background with glass panes
         val filler = ItemStack(Material.GRAY_STAINED_GLASS_PANE)
@@ -158,6 +162,7 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
             12 -> handleYourListings(player)
             14 -> handlePastItems(player)
             16 -> handleCreateAuction(player)
+            settingsSlot -> handleNotificationSettings(player)
         }
     }
 
@@ -196,6 +201,23 @@ class MainMenuGUI(private val plugin: AuctionMaster) : Listener {
         // Remove item from hand and open creation GUI
         player.inventory.setItemInMainHand(null)
         CreateAuctionGUI(plugin, item.clone()).open(player)
+    }
+
+    private fun createNotificationSettingsItem(player: Player): ItemStack {
+        val item = ItemStack(Material.PLAYER_HEAD)
+        val meta = item.itemMeta as SkullMeta
+
+        meta.displayName(msg("gui.main-menu.notification-settings.name"))
+        meta.owningPlayer = player
+        meta.lore(msgList("gui.main-menu.notification-settings.lore"))
+
+        item.itemMeta = meta
+        return item
+    }
+
+    private fun handleNotificationSettings(player: Player) {
+        player.closeInventory()
+        NotificationSettingsGUI(plugin).open(player)
     }
 
     @EventHandler

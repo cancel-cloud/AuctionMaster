@@ -3,12 +3,14 @@ package cloud.coffeesystems.auctionmaster.ui
 import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.model.Auction
 import cloud.coffeesystems.auctionmaster.model.AuctionStatus
+import cloud.coffeesystems.auctionmaster.notifications.NotificationSoundType
 import java.util.Locale
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
@@ -282,6 +284,14 @@ class ConfirmationGUI(
                                     )
                     )
                 }
+
+                plugin.notificationSettings.playSoundIfEnabled(
+                        seller,
+                        NotificationSoundType.AUCTION_SELL,
+                        Sound.BLOCK_AMETHYST_BLOCK_CHIME,
+                        0.85f,
+                        1.0f
+                )
             } else {
                 // Seller is offline - store pending payment
                 val offlineSeller = Bukkit.getOfflinePlayer(auction.sellerUuid)
@@ -323,6 +333,13 @@ class ConfirmationGUI(
                     "auction.buy.success",
                     auction.item.type.name,
                     auction.price
+            )
+            plugin.notificationSettings.playSoundIfEnabled(
+                    player,
+                    NotificationSoundType.AUCTION_BUY,
+                    Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                    0.85f,
+                    1.0f
             )
             player.closeInventory()
         } else {

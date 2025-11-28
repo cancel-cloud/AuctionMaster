@@ -139,6 +139,12 @@ gui:
         - "&7Halte das Item vor dem Öffnen."
         - ""
         - "&eZum Starten klicken."
+    notification-settings:
+      name: "&6◆ &e&lBenachrichtigungen"
+      lore:
+        - "&7Verwalte deine Sounds."
+        - ""
+        - "&eZum Konfigurieren klicken."
   my-listings:
     title: "&6◆ &e&lDeine aktiven Angebote"
     click-to-cancel: "&eKlicke, um dieses Angebot zu löschen."
@@ -287,7 +293,7 @@ gui:
         - "&7Stoppt und gibt das Item zurück."
         - ""
         - "&eZum Abbrechen klicken."
-  fee-info:
+    fee-info:
       name: "&6◆ &e&lGebührenübersicht"
       lore:
         - "&7Grundgebühr: &f${0}"
@@ -372,3 +378,37 @@ help:
   admin-header: "&6Admin Befehle:"
   reload: "&6/auction reload &7- &fLade die Plugin-Konfiguration neu"
   clear: "&6/auction clear [spieler] &7- &fLösche Auktionen"
+  notification-settings:
+    title: "&6◆ &e&lBenachrichtigungseinstellungen"
+    state:
+      enabled: "&aAktiv"
+      disabled: "&cDeaktiviert"
+    toggle:
+      create:
+        name: "&6◆ &e&lAuktion erstellen"
+        lore:
+          - "&7Spielt beim Erstellen einer Auktion."
+          - "&7Status: &f{0}"
+          - ""
+          - "&eZum Umschalten klicken."
+      buy:
+        name: "&6◆ &e&lAuktion kaufen"
+        lore:
+          - "&7Spielt wenn du eine Auktion kaufst."
+          - "&7Status: &f{0}"
+          - ""
+          - "&eZum Umschalten klicken."
+      sell:
+        name: "&6◆ &e&lAuktion verkaufen"
+        lore:
+          - "&7Spielt wenn deine Auktion verkauft wird."
+          - "&7Status: &f{0}"
+          - ""
+          - "&eZum Umschalten klicken."
+      login:
+        name: "&6◆ &e&lLogin-Auszahlungen"
+        lore:
+          - "&7Spielt bei Auszahlungen nach dem Login."
+          - "&7Status: &f{0}"
+          - ""
+          - "&eZum Umschalten klicken."

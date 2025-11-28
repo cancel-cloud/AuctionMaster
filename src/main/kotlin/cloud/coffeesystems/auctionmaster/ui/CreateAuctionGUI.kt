@@ -2,11 +2,13 @@ package cloud.coffeesystems.auctionmaster.ui
 
 import cloud.coffeesystems.auctionmaster.AuctionMaster
 import cloud.coffeesystems.auctionmaster.model.AuctionDuration
+import cloud.coffeesystems.auctionmaster.notifications.NotificationSoundType
 import java.util.Locale
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
@@ -352,6 +354,14 @@ class CreateAuctionGUI(
                         "%.2f".format(fee)
                 )
             }
+
+            plugin.notificationSettings.playSoundIfEnabled(
+                    player,
+                    NotificationSoundType.AUCTION_CREATE,
+                    Sound.BLOCK_NOTE_BLOCK_PLING,
+                    0.8f,
+                    1.0f
+            )
 
             player.closeInventory()
         } else {

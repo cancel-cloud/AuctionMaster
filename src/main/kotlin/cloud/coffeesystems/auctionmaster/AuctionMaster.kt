@@ -8,6 +8,7 @@ import cloud.coffeesystems.auctionmaster.database.AuctionManager
 import cloud.coffeesystems.auctionmaster.database.DatabaseManager
 import cloud.coffeesystems.auctionmaster.hooks.EconomyHook
 import cloud.coffeesystems.auctionmaster.migration.DatabaseMigrationService
+import cloud.coffeesystems.auctionmaster.notifications.NotificationSettingsService
 import cloud.coffeesystems.auctionmaster.util.MessageManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
@@ -25,6 +26,9 @@ class AuctionMaster : JavaPlugin() {
                 private set
 
         lateinit var economyHook: EconomyHook
+                private set
+
+        lateinit var notificationSettings: NotificationSettingsService
                 private set
 
         private lateinit var migrationService: DatabaseMigrationService
@@ -68,6 +72,7 @@ class AuctionMaster : JavaPlugin() {
 
                         // Initialize auction manager
                         auctionManager = AuctionManager(databaseManager)
+                        notificationSettings = NotificationSettingsService(this)
 
                         databaseConnectionFailed = false
 
