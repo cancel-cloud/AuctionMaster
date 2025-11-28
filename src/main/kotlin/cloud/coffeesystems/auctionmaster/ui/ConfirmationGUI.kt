@@ -256,7 +256,7 @@ class ConfirmationGUI(
 
             // Pay seller
             val seller = Bukkit.getPlayer(auction.sellerUuid)
-            if (seller != null) {
+            if (seller != null && seller.isOnline) {
                 // Seller is online - pay immediately
                 plugin.economyHook.deposit(seller, auction.price)
                 plugin.messageManager.send(
