@@ -53,10 +53,19 @@ class NotificationSettingsService(private val plugin: AuctionMaster) {
                         Sound.ENTITY_PLAYER_LEVELUP
                 }
 
+        /**
+         * Get settings for a player from cache.
+         * If not in cache, loads from DB synchronously.
+         * For multi-server environments, call refreshSettingsAsync on player join.
+         */
         fun getSettings(playerUuid: UUID): Settings {
                 return settingsCache[playerUuid] ?: loadSettings(playerUuid)
         }
 
+        /**
+         * Load settings from database.
+         * This is a synchronous DB call - use refreshSettingsAsync for async loading.
+         */
         private fun loadSettings(playerUuid: UUID): Settings {
                 val uuidString = playerUuid.toString()
                 val settings =
@@ -102,10 +111,27 @@ class NotificationSettingsService(private val plugin: AuctionMaster) {
                 return settings
         }
 
+        /**
+         * Refresh settings from DB asynchronously.
+         * Call this on player join for multi-server sync.
+         */
+        fun refreshSettingsAsync(playerUuid: UUID) {
+                plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                        // Clear cache first to ensure fresh load
+                        settingsCache.remove(playerUuid)
+                        // Load from DB (this will repopulate cache)
+                        loadSettings(playerUuid)
+                })
+        }
+
         fun isEnabled(playerUuid: UUID, type: NotificationSoundType): Boolean {
                 return getSettings(playerUuid).isEnabled(type)
         }
 
+        /**
+         * Toggle a notification setting.
+         * Updates DB synchronously to ensure consistency, then updates cache.
+         */
         fun toggle(playerUuid: UUID, type: NotificationSoundType): Settings {
                 val current = getSettings(playerUuid)
                 val newSettings = current.with(type, !current.isEnabled(type))
@@ -127,6 +153,48 @@ class NotificationSettingsService(private val plugin: AuctionMaster) {
 
                 settingsCache[playerUuid] = newSettings
                 return newSettings
+        }
+
+        /**
+         * Toggle a notification setting asynchronously.
+         * Updates DB in background, updates cache optimistically.
+         */
+        fun toggleAsync(playerUuid: UUID, type: NotificationSoundType, callback: ((Settings) -> Unit)? = null) {
+                val current = getSettings(playerUuid)
+                val newSettings = current.with(type, !current.isEnabled(type))
+                val uuidString = playerUuid.toString()
+
+                // Update cache optimistically
+                settingsCache[playerUuid] = newSettings
+
+                // Update DB async
+                plugin.server.scheduler.runTaskAsynchronously(plugin, Runnable {
+                        try {
+                                transaction(plugin.databaseManager.getDatabase()) {
+                                        NotificationSettings.update({
+                                                NotificationSettings.playerUuid eq uuidString
+                                        }) {
+                                                it[NotificationSettings.soundOnAuctionCreate] =
+                                                        newSettings.auctionCreate
+                                                it[NotificationSettings.soundOnAuctionBuy] = newSettings.auctionBuy
+                                                it[NotificationSettings.soundOnAuctionSell] =
+                                                        newSettings.auctionSell
+                                                it[NotificationSettings.soundOnLoginPayout] =
+                                                        newSettings.loginPayout
+                                        }
+                                }
+                                // Call callback on main thread if provided
+                                if (callback != null) {
+                                        plugin.server.scheduler.runTask(plugin, Runnable {
+                                                callback(newSettings)
+                                        })
+                                }
+                        } catch (e: Exception) {
+                                // Rollback cache on failure
+                                settingsCache[playerUuid] = current
+                                plugin.logger.warning("Failed to save notification settings for $playerUuid: ${e.message}")
+                        }
+                })
         }
 
         fun playSoundIfEnabled(
